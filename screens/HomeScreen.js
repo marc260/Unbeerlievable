@@ -9,8 +9,7 @@ import {
   View,
   Button,
 } from 'react-native';
-import { WebBrowser } from 'expo';
-import { ImagePicker } from 'expo';
+import { WebBrowser, ImagePicker, Permissions } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
@@ -42,23 +41,33 @@ export default class HomeScreen extends React.Component {
             {this._maybeRenderDevelopmentModeWarning()}
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Button
-                  title="Pick an image from camera roll"
+                  title="Pick an image from Galery"
                   onPress={this._pickImage}
                 />
                 {image &&
                   <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
               </View>
           </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
-            </TouchableOpacity>
+          <View style={styles.getStartedContainer}>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                
+                
+                <Button
+                  title="Pick an image from Camera Roll"
+                  onPress={this._pickImageFromCamera}
+                />
+                {image &&
+                  <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+              </View>
+              <Button
+                  title="Permission"
+                  onPress={this._checkMultiPermissions}
+                />
           </View>
         </ScrollView>
 
         <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
+          <Text style={styles.tabBarInfoText}>Edit Tab bar at:</Text>
 
           <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
             <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
@@ -81,7 +90,30 @@ export default class HomeScreen extends React.Component {
     }
   };
 
-  
+  _pickImageFromCamera = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      this.setState({ image: result.uri });
+    }
+  };
+
+  _checkMultiPermissions = async () => {
+    const permission = await Permissions.getAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
+    if (permission.status !== 'granted') {
+      alert('Hey! You heve not enabled selected permissions');
+      const newPermission = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
+        if (newPermission.status !== 'granted') {
+          alert('Hey! You heve not enabled selected permissions');
+        }
+    }
+    
+  }
 
   _maybeRenderDevelopmentModeWarning() {
     if (__DEV__) {
