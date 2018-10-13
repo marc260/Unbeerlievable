@@ -56,10 +56,9 @@ export default class HomeScreen extends React.Component {
                 onPress={this._checkMultiPermissions}
               />
             </View>
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+            {image && <Image source={{ uri: image }} style={{ width: 400, height: 400 }} />}
           </View>
         </ScrollView>
-
       </View>
     );
   }
