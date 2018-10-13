@@ -38,30 +38,25 @@ export default class HomeScreen extends React.Component {
             />
           </View>
           <View style={styles.getStartedContainer}>
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Button
-                  title="Pick an image from Galery"
-                  onPress={this._pickImage}
-                />
-                {image &&
-                  <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-              </View>
-          </View>
-          <View style={styles.getStartedContainer}>
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                
-                
-                <Button
-                  title="Pick an image from Camera Roll"
-                  onPress={this._pickImageFromCamera}
-                />
-                {image &&
-                  <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-              </View>
+            <View style={styles.buttonContainer}>
               <Button
-                  title="Permission"
-                  onPress={this._checkMultiPermissions}
-                />
+                title="Pick an image from Galery"
+                onPress={this._pickImage}
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                title="Pick an image from Camera Roll"
+                onPress={this._pickImageFromCamera}
+              />
+            </View>    
+            <View style={styles.buttonContainer}>
+              <Button
+                title="Permission"
+                onPress={this._checkMultiPermissions}
+              />
+            </View>
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </View>
         </ScrollView>
 
@@ -96,6 +91,7 @@ export default class HomeScreen extends React.Component {
   };
 
   _checkMultiPermissions = async () => {
+    //check if permission was already granted
     const permission = await Permissions.getAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
     if (permission.status !== 'granted') {
       alert('Hey! You heve not enabled selected permissions');
@@ -104,7 +100,6 @@ export default class HomeScreen extends React.Component {
           alert('Hey! You heve not enabled selected permissions');
         }
     }
-    
   }
 
   _handleLearnMorePress = () => {
@@ -145,9 +140,14 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: -10,
   },
+  buttonContainer: {
+    margin: 10,
+  },
   getStartedContainer: {
     alignItems: 'center',
     marginHorizontal: 50,
+    flex: 1,
+    justifyContent: 'center',
   },
   homeScreenFilename: {
     marginVertical: 7,
