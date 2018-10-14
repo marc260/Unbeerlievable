@@ -10,8 +10,11 @@ import {
   Button,
 } from 'react-native';
 import { WebBrowser, ImagePicker, Permissions } from 'expo';
+import axios from 'axios';
 
 import { MonoText } from '../components/StyledText';
+//import LINK_WITH_API_KEY from '/resources/link'
+
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -21,6 +24,7 @@ export default class HomeScreen extends React.Component {
   state = {
     image: null,
   };
+
 
   render() {
     let { image } = this.state;
@@ -57,6 +61,12 @@ export default class HomeScreen extends React.Component {
               />
             </View>
             {image && <Image source={{ uri: image }} style={{ width: 400, height: 400 }} />}
+            <View style={styles.buttonContainer}>
+              <Button
+                title="Request OCR"
+                onPress={this._getOCRFromApi}
+              />
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -67,12 +77,37 @@ export default class HomeScreen extends React.Component {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
+      base64: true,
     });
-
     console.log(result);
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri });
+      this.setState({
+        image: result.uri,
+      });
+      
+      let body = {
+        "requests": [
+          {
+            "image": {
+              "content": result.base64,
+            },
+            "features": [
+              {
+                "type": "TEXT_DETECTION"
+              }
+            ]
+          }
+        ]
+      }
+
+      axios.post('https://vision.googleapis.com/v1/images:annotate?key=API_KEY', body)
+      .then(res => {
+          console.log(res);
+          console.log(res.data);
+      })
+      
+
     }
   };
 
@@ -80,12 +115,35 @@ export default class HomeScreen extends React.Component {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
+      base64: true,
     });
 
     console.log(result);
 
     if (!result.cancelled) {
       this.setState({ image: result.uri });
+
+      let body = {
+        "requests": [
+          {
+            "image": {
+              "content": result.base64,
+            },
+            "features": [
+              {
+                "type": "TEXT_DETECTION"
+              }
+            ]
+          }
+        ]
+      }
+
+      axios.post('https://vision.googleapis.com/v1/images:annotate?key=API_KEY', body)
+      .then(res => {
+          console.log(res);
+          console.log(res.data);
+      })
+
     }
   };
 
@@ -109,6 +167,42 @@ export default class HomeScreen extends React.Component {
     WebBrowser.openBrowserAsync(
       'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
     );
+  };
+
+  _getOCRFromApi = async () => {//for separate OCR testing
+    let body = {
+      "requests": [
+        {
+          "image": {
+            "source": {
+              "imageUri": "https://i.imgur.com/Nlot5mR.jpg" //image URL
+            }
+          },
+          "features": [
+            {
+              "type": "TEXT_DETECTION"
+            }
+          ]
+        }
+      ]
+    }
+
+    /*not working:
+    let response = await fetch('https://vision.googleapis.com/v1/images:annotate?key=', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    */
+   
+    axios.post('https://vision.googleapis.com/v1/images:annotate?key=API-KEY', body)
+      .then(res => {
+          console.log(res);
+          console.log(res.data);
+      })
   };
 }
 
