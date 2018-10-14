@@ -1,3 +1,5 @@
 node_modules/**/*
 .expo/*
 resources/*
+yarn-error.log
+yarn.lock
