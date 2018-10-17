@@ -5,15 +5,14 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
+  TextInput,
   View,
   Button,
 } from 'react-native';
-import { WebBrowser, ImagePicker, Permissions } from 'expo';
+import { ImagePicker, Permissions } from 'expo';
 import axios from 'axios';
 
 import LINK_WITH_API_KEY from '../resources/link';
-import { MonoText } from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
