@@ -59,6 +59,8 @@ export default class HomeScreen extends React.Component {
                 onPress={this._getOCRFromApi}
               />
             </View>
+            {this.state.Description?(<Text> 
+            {this.state.Description} </Text>):(null)}
           </View>
         </ScrollView>
       </View>
@@ -103,12 +105,34 @@ export default class HomeScreen extends React.Component {
             }
           ]
         }
-  
+        /*
         axios.post(LINK_WITH_API_KEY.link, body)
         .then(res => {
             console.log(res);
-            console.log(res.data);
+            //console.log(res.data);
         })
+        */
+
+        const response = await fetch(LINK_WITH_API_KEY.link, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
+        const parsed = await response.json();
+        //console.log(parsed);
+        var actualDescription = [];
+        for (let i = 0; i < parsed.responses[0].textAnnotations.length; i++) {
+          if (parsed.responses[0].textAnnotations[i].description)
+          actualDescription.push(parsed.responses[0].textAnnotations[i].description);
+        }
+        this.setState({
+          Description: actualDescription[0],
+        });
+        console.log(actualDescription[0]);
+
       }
     }
   };
@@ -150,19 +174,40 @@ export default class HomeScreen extends React.Component {
             }
           ]
         }
-  
+        /*
         axios.post(LINK_WITH_API_KEY.link, body)
         .then(res => {
             console.log(res);
-            console.log(res.data);
+            //console.log(res.data);
         })
-  
+        */
+        
+        const response = await fetch(LINK_WITH_API_KEY.link, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
+        const parsed = await response.json();
+        //console.log(parsed);
+        var actualDescription = [];
+        for (let i = 0; i < parsed.responses[0].textAnnotations.length; i++) {
+          if (parsed.responses[0].textAnnotations[i].description)
+          actualDescription.push(parsed.responses[0].textAnnotations[i].description);
+        }
+        this.setState({
+          Description: actualDescription[0],
+        });
+        console.log(actualDescription[0]);
+
       }
     }
   };
 
   _getOCRFromApi = async () => {//for separate OCR testing
-    let body = {
+    let body21 = {
       "requests": [
         {
           "image": {
@@ -179,12 +224,60 @@ export default class HomeScreen extends React.Component {
         }
       ]
     }
-   
+
+    const body = {
+      requests:[
+        {
+          image: {
+            source: {
+              imageUri: "https://i.imgur.com/IuYOb09.jpg" //image URL
+            }
+          },
+          features:[
+            {
+              type: 'TEXT_DETECTION',
+              maxResults: 1,
+            }
+          ]
+        },
+      ],
+    };
+
+    /*
     axios.post(LINK_WITH_API_KEY.link, body)
-      .then(res => {
-          console.log(res);
-          console.log(res.data);
+      .then(response => {
+          console.log(response);
+          res = response;
+          //console.log(response.data);
       })
+    
+    let parsed = JSON.parse(res);
+    let description = [];
+    for (let i in parsed) {
+      description.push([i, parsed[i]]);
+    }
+    console.log(description);
+    */
+  const response = await fetch(LINK_WITH_API_KEY.link, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  const parsed = await response.json();
+  //console.log(parsed);
+  var actualDescription = [];
+  for (let i = 0; i < parsed.responses[0].textAnnotations.length; i++) {
+    if (parsed.responses[0].textAnnotations[i].description)
+    actualDescription.push(parsed.responses[0].textAnnotations[i].description);
+  }
+  this.setState({
+    Description: actualDescription[0],
+  });
+  console.log(actualDescription[0]);
+
   };
 }
 
