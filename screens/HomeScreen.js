@@ -12,9 +12,8 @@ import {
 import { WebBrowser, ImagePicker, Permissions } from 'expo';
 import axios from 'axios';
 
+import LINK_WITH_API_KEY from '../resources/link';
 import { MonoText } from '../components/StyledText';
-//import LINK_WITH_API_KEY from '/resources/link'
-
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -54,16 +53,10 @@ export default class HomeScreen extends React.Component {
                 onPress={this._pickImageFromCamera}
               />
             </View>    
+            {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
             <View style={styles.buttonContainer}>
               <Button
-                title="Permission"
-                onPress={this._checkMultiPermissions}
-              />
-            </View>
-            {image && <Image source={{ uri: image }} style={{ width: 400, height: 400 }} />}
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Request OCR"
+                title="Request OCR from URL"
                 onPress={this._getOCRFromApi}
               />
             </View>
@@ -74,76 +67,98 @@ export default class HomeScreen extends React.Component {
   }
 
   _pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      base64: true,
-    });
-    console.log(result);
-
-    if (!result.cancelled) {
-      this.setState({
-        image: result.uri,
+    //check if permission was already granted
+    const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
+    if (permission.status !== 'granted') {
+      //alert('Hey! You heve not enabled selected permissions'); 
+      const newPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (newPermission.status !== 'granted') {
+          alert('Hey! You heve not enabled selected permissions');
+        }
+    }
+    else{ //all granted
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        base64: true,
       });
-      
-      let body = {
-        "requests": [
-          {
-            "image": {
-              "content": result.base64,
-            },
-            "features": [
-              {
-                "type": "TEXT_DETECTION"
-              }
-            ]
-          }
-        ]
+      console.log(result);
+  
+      if (!result.cancelled) {
+        this.setState({
+          image: result.uri,
+        });
+        
+        let body = {
+          "requests": [
+            {
+              "image": {
+                "content": result.base64,
+              },
+              "features": [
+                {
+                  "type": "TEXT_DETECTION"
+                  //,"maxResults":5
+                }
+              ]
+            }
+          ]
+        }
+  
+        axios.post(LINK_WITH_API_KEY.link, body)
+        .then(res => {
+            console.log(res);
+            console.log(res.data);
+        })
       }
-
-      axios.post('https://vision.googleapis.com/v1/images:annotate?key=API_KEY', body)
-      .then(res => {
-          console.log(res);
-          console.log(res.data);
-      })
-      
-
     }
   };
 
   _pickImageFromCamera = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      base64: true,
-    });
 
-    console.log(result);
-
-    if (!result.cancelled) {
-      this.setState({ image: result.uri });
-
-      let body = {
-        "requests": [
-          {
-            "image": {
-              "content": result.base64,
-            },
-            "features": [
-              {
-                "type": "TEXT_DETECTION"
-              }
-            ]
-          }
-        ]
+    //check if permission was already granted
+    const permission = await Permissions.getAsync(Permissions.CAMERA);
+    if (permission.status !== 'granted') {
+      //alert('Hey! You heve not enabled selected permissions'); 
+      const newPermission = await Permissions.askAsync(Permissions.CAMERA);
+        if (newPermission.status !== 'granted') {
+          alert('Hey! You heve not enabled selected permissions');
+        }
+    }
+    else {
+      let result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        base64: true,
+      });
+  
+      console.log(result);
+  
+      if (!result.cancelled) {
+        this.setState({ image: result.uri });
+  
+        let body = {
+          "requests": [
+            {
+              "image": {
+                "content": result.base64,
+              },
+              "features": [
+                {
+                  "type": "TEXT_DETECTION"
+                }
+              ]
+            }
+          ]
+        }
+  
+        axios.post(LINK_WITH_API_KEY.link, body)
+        .then(res => {
+            console.log(res);
+            console.log(res.data);
+        })
+  
       }
-
-      axios.post('https://vision.googleapis.com/v1/images:annotate?key=API_KEY', body)
-      .then(res => {
-          console.log(res);
-          console.log(res.data);
-      })
-
     }
   };
 
@@ -157,6 +172,13 @@ export default class HomeScreen extends React.Component {
           alert('Hey! You heve not enabled selected permissions');
         }
     }
+    /*
+    <View style={styles.buttonContainer}>
+    <Button
+      title="Permission"
+      onPress={this._checkMultiPermissions}
+    />
+    </View>*/
   }
 
   _handleLearnMorePress = () => {
@@ -181,6 +203,7 @@ export default class HomeScreen extends React.Component {
           "features": [
             {
               "type": "TEXT_DETECTION"
+              
             }
           ]
         }
@@ -198,7 +221,7 @@ export default class HomeScreen extends React.Component {
     });
     */
    
-    axios.post('https://vision.googleapis.com/v1/images:annotate?key=API-KEY', body)
+    axios.post(LINK_WITH_API_KEY.link, body)
       .then(res => {
           console.log(res);
           console.log(res.data);
