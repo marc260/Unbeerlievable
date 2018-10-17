@@ -52,13 +52,13 @@ export default class HomeScreen extends React.Component {
                 onPress={this._pickImageFromCamera}
               />
             </View>    
-            {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
             <View style={styles.buttonContainer}>
               <Button
                 title="Request OCR from URL"
                 onPress={this._getOCRFromApi}
               />
             </View>
+            {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
             {this.state.Description?(<Text> 
             {this.state.Description} </Text>):(null)}
           </View>
