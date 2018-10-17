@@ -162,35 +162,6 @@ export default class HomeScreen extends React.Component {
     }
   };
 
-  _checkMultiPermissions = async () => {
-    //check if permission was already granted
-    const permission = await Permissions.getAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
-    if (permission.status !== 'granted') {
-      alert('Hey! You heve not enabled selected permissions');
-      const newPermission = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
-        if (newPermission.status !== 'granted') {
-          alert('Hey! You heve not enabled selected permissions');
-        }
-    }
-    /*
-    <View style={styles.buttonContainer}>
-    <Button
-      title="Permission"
-      onPress={this._checkMultiPermissions}
-    />
-    </View>*/
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
-  };
-
   _getOCRFromApi = async () => {//for separate OCR testing
     let body = {
       "requests": [
@@ -209,17 +180,6 @@ export default class HomeScreen extends React.Component {
         }
       ]
     }
-
-    /*not working:
-    let response = await fetch('https://vision.googleapis.com/v1/images:annotate?key=', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    */
    
     axios.post(LINK_WITH_API_KEY.link, body)
       .then(res => {
