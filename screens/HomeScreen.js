@@ -10,7 +10,6 @@ import {
   Button,
 } from 'react-native';
 import { ImagePicker, Permissions } from 'expo';
-import axios from 'axios';
 
 import LINK_WITH_API_KEY from '../resources/link';
 
@@ -105,13 +104,6 @@ export default class HomeScreen extends React.Component {
             }
           ]
         }
-        /*
-        axios.post(LINK_WITH_API_KEY.link, body)
-        .then(res => {
-            console.log(res);
-            //console.log(res.data);
-        })
-        */
 
         const response = await fetch(LINK_WITH_API_KEY.link, {
           method: 'POST',
@@ -174,14 +166,8 @@ export default class HomeScreen extends React.Component {
             }
           ]
         }
-        /*
-        axios.post(LINK_WITH_API_KEY.link, body)
-        .then(res => {
-            console.log(res);
-            //console.log(res.data);
-        })
-        */
         
+        //Request from Google Vision API
         const response = await fetch(LINK_WITH_API_KEY.link, {
           method: 'POST',
           headers: {
@@ -191,12 +177,14 @@ export default class HomeScreen extends React.Component {
           body: JSON.stringify(body),
         });
         const parsed = await response.json();
-        //console.log(parsed);
+       
+        //Parse response
         var actualDescription = [];
         for (let i = 0; i < parsed.responses[0].textAnnotations.length; i++) {
           if (parsed.responses[0].textAnnotations[i].description)
           actualDescription.push(parsed.responses[0].textAnnotations[i].description);
         }
+        //Only the first will be the full response text description
         this.setState({
           Description: actualDescription[0],
         });
@@ -207,24 +195,6 @@ export default class HomeScreen extends React.Component {
   };
 
   _getOCRFromApi = async () => {//for separate OCR testing
-    let body21 = {
-      "requests": [
-        {
-          "image": {
-            "source": {
-              "imageUri": "https://i.imgur.com/Nlot5mR.jpg" //image URL
-            }
-          },
-          "features": [
-            {
-              "type": "TEXT_DETECTION"
-              
-            }
-          ]
-        }
-      ]
-    }
-
     const body = {
       requests:[
         {
@@ -243,21 +213,6 @@ export default class HomeScreen extends React.Component {
       ],
     };
 
-    /*
-    axios.post(LINK_WITH_API_KEY.link, body)
-      .then(response => {
-          console.log(response);
-          res = response;
-          //console.log(response.data);
-      })
-    
-    let parsed = JSON.parse(res);
-    let description = [];
-    for (let i in parsed) {
-      description.push([i, parsed[i]]);
-    }
-    console.log(description);
-    */
   const response = await fetch(LINK_WITH_API_KEY.link, {
     method: 'POST',
     headers: {
