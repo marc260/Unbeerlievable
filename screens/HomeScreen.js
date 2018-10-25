@@ -41,7 +41,7 @@ export default class HomeScreen extends React.Component {
           <View style={styles.getStartedContainer}>
             <View style={styles.buttonContainer}>
               <Button
-                title="Pick an image from Galery"
+                title="Pick an image from Gallery"
                 onPress={this._pickImage}
               />
             </View>
