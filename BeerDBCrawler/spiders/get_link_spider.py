@@ -11,7 +11,7 @@
    links visible in the current page (about 25 each page)
 
    For UN:
-   Easier, just max of 6 ID characters at the end of URL so no need to get links for it in this spider
+   Easier, just max of 6 beer ID characters at the end of URL so no need to get links for it in this spider
 '''
 
 # run with scrapy crawl get-links-BA -o links-BA.json

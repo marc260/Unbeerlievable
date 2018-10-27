@@ -2,8 +2,8 @@ import scrapy
 
 from BeerDBCrawler.items import Beer
 
-class BeerSpiderSingleBAPage(scrapy.Spider):
-    name = "beer-single-page-BA" # Spider identifier
+class SingleBAPageSpider(scrapy.Spider):
+    name = "single-page-BA" # Spider identifier
     allowed_domains = [ # domains accessible by the crawler
         "www.beeradvocate.com"
     ]
@@ -12,7 +12,6 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
     ]
 
     def parse(self, response): # parse page content
-        #beerImgURL = response.css('div[id*=main_pic_norm] div[style*=position:relative] img src::text').extract()
         # instantiate Beer object and extracts the respective info from the page
         item = Beer()
         item['name'] = response.css('div.titleBar h1::text').extract_first()
@@ -31,10 +30,11 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
         item['abv'] = response.css('div[id*=info_box]::text')[13].extract()[1:-1] #check if works everytime
         item['availability'] = response.css('div[id*=info_box]::text')[15].extract()[1:-1]#remove space and new line
         item['description'] = response.css('div[id*=info_box]::text')[18].extract()[1:]
+        item['img_url'] = response.css('div[id*=main_pic_norm] img::attr(src)').extract_first()
         yield item
 
-class BeerSpiderSingleUNPage(scrapy.Spider):
-    name = "beer-single-page-UN" # Spider identifier
+class SingleUNPageSpider(scrapy.Spider):
+    name = "single-page-UN" # Spider identifier
     allowed_domains = [ # domains accessible by the crawler
         "untappd.com"
     ]
@@ -43,7 +43,6 @@ class BeerSpiderSingleUNPage(scrapy.Spider):
     ]
     
     def parse(self, response): # parse page content
-        #img = response.css('div[class=basic] a[class=label] img').extract_first()[10:-2]
         item = Beer()
         item['name'] = response.css('div[class=name] h1::text').extract_first()
         item['database'] = "Untappd"
@@ -56,4 +55,5 @@ class BeerSpiderSingleUNPage(scrapy.Spider):
         item['style'] = response.css('p[class=style]::text').extract_first()
         item['abv'] = response.css('p[class=abv]::text').extract_first()[1:-1]
         item['description'] = response.css('div[class=beer-descrption-read-less]::text').extract_first()[1:-1]
+        item['img_url'] = response.css('img[class=lazy]::attr(data-original)').extract_first()
         yield item

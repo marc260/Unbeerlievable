@@ -14,8 +14,35 @@ from BeerDBCrawler.items import Beer
 # xpath tutorial: https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html
 
 
-class SingleBAPageSpider(scrapy.Spider):
-    name = "single-page-BA" # Spider identifier
+class BASpider(scrapy.Spider):
+    name = "BA" # Spider identifier
+
+    # Remove duplicates from .json
+    
+    '''
+    with open('links-BA.json') as urlList:
+        data = json.load(urlList)
+    #print(data)
+
+    print(data[0]["Link"][0])
+
+    seen = []
+    dup = []
+    for j in range(0, 3884):
+        #print("j = " + str(j))
+        for x in data[j]["Link"]:
+            if x not in seen:
+                seen.append(x)
+            else:
+                dup.append(x)
+    with open('noDuplicates.txt', 'w') as f:
+        print(seen, file=f) 
+    with open('Duplicates.txt', 'w') as f:
+        print(dup, file=f) 
+    '''
+
+
+
     allowed_domains = [ # domains accessible by the crawler
         "www.beeradvocate.com"
     ]
@@ -45,8 +72,8 @@ class SingleBAPageSpider(scrapy.Spider):
         item['img_url'] = response.css('div[id*=main_pic_norm] img::attr(src)').extract_first()
         yield item
 
-class SingleUNPageSpider(scrapy.Spider):
-    name = "single-page-UN" # Spider identifier
+class UNSpider(scrapy.Spider):
+    name = "UN" # Spider identifier
     allowed_domains = [ # domains accessible by the crawler
         "untappd.com"
     ]
