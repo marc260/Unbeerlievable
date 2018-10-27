@@ -33,14 +33,20 @@ class GetLinksBASpider(scrapy.Spider):
         'https://www.beeradvocate.com/search/?q=stout&qt=beer&start=0'
     ]
 
-    i = 25 # Advance by 25 each time
-    while i < 17000:
-        new_url = 'https://www.beeradvocate.com/search/?q=stout&qt=beer&start=' + str(i)
-        start_urls.append(new_url)
-        i += 25
+    # Beer styles to search with their approximate number of beers
+    dictList = {'stout':17000, 'bock':5000, 'ale':57000, 'lager':8000, 'porter':10200}
+    for style, limit in dictList.items():
+        i = 25 # Advance by 25 each time
+
+        # iterate until limit while changing style in the search and increasing 25 to the search
+        while i < limit:
+            new_url = 'https://www.beeradvocate.com/search/?q=' + str(style) + '&qt=beer&start=' + str(i)
+            start_urls.append(new_url)
+            i += 25
+    
 
     def parse(self, response):
         for link in response.css('body'):
             yield {
-                'Link': link.css('a[href*=profile]::attr(href)')[::2].extract()
+                'Link': link.css('a[href*=profile]::attr(href)')[::2].extract() # gets the links found in the current page
             }
