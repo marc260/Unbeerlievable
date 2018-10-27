@@ -23,7 +23,7 @@ class CSVOutputPipeline(object): # exports Item Object to .csv file
         self.file = open('output.csv', 'w+b')
         self.exporter = CsvItemExporter(self.file)
         # Force custom order:
-        self.exporter.fields_to_export = ['name', 'database', 'id', 'brewery', 'rating', 'number_of_ratings', 'ranking', 'number_of_reviews', 'date', 'ibu', 'pDev', 'state', 'country', 'brewery_website', 'style', 'abv', 'availability', 'description']
+        self.exporter.fields_to_export = ['name', 'database', 'id', 'brewery', 'rating', 'number_of_ratings', 'ranking', 'number_of_reviews', 'date', 'ibu', 'pDev', 'state', 'country', 'brewery_website', 'style', 'abv', 'availability', 'description', 'img_url']
         self.exporter.start_exporting()
 
     def spider_closed(self, spider):

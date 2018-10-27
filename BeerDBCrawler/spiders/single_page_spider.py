@@ -1,19 +1,6 @@
 import scrapy
 
 from BeerDBCrawler.items import Beer
-#from selenium import webdriver # for dynamic websites rended by JS, like ratebeer
-
-#TODO 
-## add imgUrls, and user comments?
-# Images may or may not be added depending on how much data will be extracted
-## add ratebeerCrawler
-## Ratebeer website rended by JS so selenium needs to be used with scrapy
-## multiple pages at a time
-
-# css selectors: https://css-tricks.com/almanac/selectors/a/attribute/
-#               https://www.w3schools.com/cssref/css_selectors.asp 
-# xpath tutorial: https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html
-
 
 class BeerSpiderSingleBAPage(scrapy.Spider):
     name = "beer-single-page-BA" # Spider identifier
@@ -46,10 +33,8 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
         item['description'] = response.css('div[id*=info_box]::text')[18].extract()[1:]
         yield item
 
-
-
-class BeerSpiderSingleUntappdPage(scrapy.Spider):
-    name = "beer-single-page-Un" # Spider identifier
+class BeerSpiderSingleUNPage(scrapy.Spider):
+    name = "beer-single-page-UN" # Spider identifier
     allowed_domains = [ # domains accessible by the crawler
         "untappd.com"
     ]

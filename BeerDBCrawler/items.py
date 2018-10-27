@@ -26,6 +26,7 @@ class Beer(scrapy.Item):
     abv = scrapy.Field()
     availability = scrapy.Field()
     description = scrapy.Field()
+    img_url = scrapy.Field()
     pass
 
 class BeerdbcrawlerItem(scrapy.Item):
