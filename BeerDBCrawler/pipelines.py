@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
 # Define your item pipelines here
-#
+# Each item pipeline component (sometimes referred as just “Item Pipeline”) 
+# is a Python class that implements a simple method. They receive an item and 
+# perform an action over it, also deciding if the item should continue through 
+# the pipeline or be dropped and no longer processed.
+
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 from scrapy import signals
 from scrapy.contrib.exporter import CsvItemExporter
 
-class CSVPipeline(object):
+class CSVOutputPipeline(object):
     @classmethod
     def from_crawler(cls, crawler):
         pipeline = cls()

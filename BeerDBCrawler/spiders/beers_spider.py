@@ -13,6 +13,11 @@ from BeerDBCrawler.items import Beer
 # multiple pages:
 # search page response.css('a[href*=profile]::attr(href)').extract() 
 # in the https://www.beeradvocate.com/search/?q=stout&qt=beer&start=0
+# https://www.beeradvocate.com/search/?q=bock&qt=beer&start=0
+# https://www.beeradvocate.com/search/?q=ale&qt=beer&start=0
+# https://www.beeradvocate.com/search/?q=lager&qt=beer&start=0
+# https://www.beeradvocate.com/search/?q=porter&qt=beer&start=0
+
 # look for response.css('div[id*=ba-content] b::text').extract_first()[7:]
 # this much and loop
 
@@ -32,40 +37,25 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
 
     def parse(self, response): # parse page content
 
-        beerName = response.css('div.titleBar h1::text').extract_first()
-        breweryName = response.css('div.titleBar h1 span::text').extract_first()[3:]
-        bAscore = response.css('span.ba-ravg::text').extract_first()
-        numberOfRatings = response.css('span.ba-ratings::text').extract_first()
-        BA_Ranking = response.css('div[id*=item_stats] dd::text').extract_first()[1:]
-        BA_NumberOfReviews = response.css('span.ba-reviews::text').extract_first()
-        pDev = response.css('span.ba-pdev::text').extract_first()[1:]
-        breweryState = response.css('div.break a[href*=place] ::text')[0].extract()
-        breweryCountry = response.css('div.break a[href*=place] ::text')[1].extract()
-        breweryWebsite = response.css('div.break a[href*=http] ::text').extract_first()
-        style = response.css('div.break a[href*=styles] b::text').extract_first()
-        abv = response.css('div[id*=info_box]::text')[13].extract()[1:-1]#check if works everytime
-        availability = response.css('div[id*=info_box]::text')[15].extract()[1:-1]#remove space and new line
-        description = response.css('div[id*=info_box]::text')[18].extract()[1:]
-        beerID = int(response.url.split('/')[6]) # at most 6 digits for BA beer IDs
         #beerImgURL = response.css('div[id*=main_pic_norm] div[style*=position:relative] img src::text').extract()
         
         item = Beer()
-        item['name'] = beerName
+        item['name'] = response.css('div.titleBar h1::text').extract_first()
         item['database'] = "Beer Advocate"
-        item['id'] = beerID
-        item['brewery'] = breweryName
-        item['rating'] = bAscore
-        item['number_of_ratings'] = numberOfRatings
-        item['ranking'] = BA_Ranking
-        item['number_of_reviews'] = BA_NumberOfReviews
-        item['pDev'] = pDev
-        item['state'] = breweryState
-        item['country'] = breweryCountry
-        item['brewery_website'] = breweryWebsite
-        item['style'] = style
-        item['abv'] = abv
-        item['availability'] = availability
-        item['description'] = description
+        item['id'] = int(response.url.split('/')[6]) # at most 6 digits for BA beer IDs
+        item['brewery'] = response.css('div.titleBar h1 span::text').extract_first()[3:]
+        item['rating'] = response.css('span.ba-ravg::text').extract_first()
+        item['number_of_ratings'] = response.css('span.ba-ratings::text').extract_first()
+        item['ranking'] = response.css('div[id*=item_stats] dd::text').extract_first()[1:]
+        item['number_of_reviews'] = response.css('span.ba-reviews::text').extract_first()
+        item['pDev'] = response.css('span.ba-pdev::text').extract_first()[1:]
+        item['state'] = response.css('div.break a[href*=place] ::text')[0].extract()
+        item['country'] = response.css('div.break a[href*=place] ::text')[1].extract()
+        item['brewery_website'] = response.css('div.break a[href*=http] ::text').extract_first()
+        item['style'] = response.css('div.break a[href*=styles] b::text').extract_first()
+        item['abv'] = response.css('div[id*=info_box]::text')[13].extract()[1:-1]#check if works everytime
+        item['availability'] = response.css('div[id*=info_box]::text')[15].extract()[1:-1]#remove space and new line
+        item['description'] = response.css('div[id*=info_box]::text')[18].extract()[1:]
         yield item
 
 
@@ -82,28 +72,18 @@ class BeerSpiderSingleUntappdPage(scrapy.Spider):
     
     def parse(self, response): # parse page content
 
-        beerName = response.css('div[class=name] h1::text').extract_first()
-        breweryName = response.css('p[class=brewery] a::text').extract_first()
-        score = response.css('span[class=num]::text').extract_first()[1:-1] # to remove parentesis
-        numberOfRatings = response.css('p[class=raters]::text').extract_first()[1:-9] # remove "Ratings" text and spaces
-        dateAdded = response.css('p[class=date]::text').extract_first()[7:-1] # to remove "Added" text and spaces
-        ibu = response.css('p[class=ibu]::text').extract_first()[1:-1] # spaces
-        style = response.css('p[class=style]::text').extract_first()
-        abv = response.css('p[class=abv]::text').extract_first()[1:-1]
-        description = response.css('div[class=beer-descrption-read-less]::text').extract_first()[1:-1]
-        beerID = int(response.url.split('/')[5]) # at most 6 digits for BA beer IDs
         #img = response.css('div[class=basic] a[class=label] img').extract_first()[10:-2]
         
         item = Beer()
-        item['name'] = beerName
+        item['name'] = response.css('div[class=name] h1::text').extract_first()
         item['database'] = "Untappd"
-        item['id'] = beerID
-        item['brewery'] = breweryName
-        item['rating'] = score
-        item['number_of_ratings'] = numberOfRatings
-        item['date'] = dateAdded
-        item['ibu'] = ibu
-        item['style'] = style
-        item['abv'] = abv
-        item['description'] = description
+        item['id'] = int(response.url.split('/')[5]) # at most 6 digits for BA beer IDs
+        item['brewery'] = response.css('p[class=brewery] a::text').extract_first()
+        item['rating'] = response.css('span[class=num]::text').extract_first()[1:-1] # to remove parentesis
+        item['number_of_ratings'] = response.css('p[class=raters]::text').extract_first()[1:-9] # remove "Ratings" text and spaces
+        item['date'] = response.css('p[class=date]::text').extract_first()[7:-1] # to remove "Added" text and spaces
+        item['ibu'] = response.css('p[class=ibu]::text').extract_first()[1:-1] # spaces
+        item['style'] = response.css('p[class=style]::text').extract_first()
+        item['abv'] = response.css('p[class=abv]::text').extract_first()[1:-1]
+        item['description'] = response.css('div[class=beer-descrption-read-less]::text').extract_first()[1:-1]
         yield item

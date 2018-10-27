@@ -66,7 +66,7 @@ ROBOTSTXT_OBEY = True
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
 #    'BeerDBCrawler.pipelines.BeerdbcrawlerPipeline': 300,
-    'BeerDBCrawler.pipelines.CSVPipeline': 300,
+    'BeerDBCrawler.pipelines.CSVOutputPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
