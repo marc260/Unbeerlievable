@@ -1,6 +1,6 @@
 import scrapy
 
-from tutorial.items import Beer
+from BeerDBCrawler.items import Beer
 #from selenium import webdriver # for dynamic websites rended by JS, like ratebeer
 
 #TODO 
@@ -15,7 +15,7 @@ from tutorial.items import Beer
 
 
 class BeerSpiderSingleBAPage(scrapy.Spider):
-    name = "beerSingleBA" # Spider identifier
+    name = "beer-single-page-BA" # Spider identifier
     allowed_domains = [ # domains accessible by the crawler
         "www.beeradvocate.com"
     ]
@@ -24,9 +24,6 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
     ]
 
     def parse(self, response): # parse page content
-
-
-        #for beer in response.css('body'):
 
         beerName = response.css('div.titleBar h1::text').extract_first()
         breweryName = response.css('div.titleBar h1 span::text').extract_first()[3:]
@@ -66,7 +63,7 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
 
 class BeerSpiderSingleUntappdPage(scrapy.Spider):
 
-    name = "beerSingleUn" # Spider identifier
+    name = "beer-single-page-Un" # Spider identifier
     allowed_domains = [ # domains accessible by the crawler
         "untappd.com"
     ]
@@ -75,8 +72,6 @@ class BeerSpiderSingleUntappdPage(scrapy.Spider):
     ]
     
     def parse(self, response): # parse page content
-
-        #for beer in response.css('body'):
 
         beerName = response.css('div[class=name] h1::text').extract_first()
         breweryName = response.css('p[class=brewery] a::text').extract_first()
