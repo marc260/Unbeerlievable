@@ -4,24 +4,13 @@ from BeerDBCrawler.items import Beer
 #from selenium import webdriver # for dynamic websites rended by JS, like ratebeer
 
 #TODO 
-## add imgUrls, and comments
+## add imgUrls, and user comments?
+# Images may or may not be added depending on how much data will be extracted
 ## add ratebeerCrawler
 ## Ratebeer website rended by JS so selenium needs to be used with scrapy
-## export output to csv (custom pipeline)
 ## multiple pages at a time
 
-# multiple pages:
-# search page response.css('a[href*=profile]::attr(href)').extract() 
-# in the https://www.beeradvocate.com/search/?q=stout&qt=beer&start=0
-# https://www.beeradvocate.com/search/?q=bock&qt=beer&start=0
-# https://www.beeradvocate.com/search/?q=ale&qt=beer&start=0
-# https://www.beeradvocate.com/search/?q=lager&qt=beer&start=0
-# https://www.beeradvocate.com/search/?q=porter&qt=beer&start=0
-
-# look for response.css('div[id*=ba-content] b::text').extract_first()[7:]
-# this much and loop
-
-# css slectors: https://css-tricks.com/almanac/selectors/a/attribute/
+# css selectors: https://css-tricks.com/almanac/selectors/a/attribute/
 #               https://www.w3schools.com/cssref/css_selectors.asp 
 # xpath tutorial: https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html
 
@@ -36,9 +25,8 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
     ]
 
     def parse(self, response): # parse page content
-
         #beerImgURL = response.css('div[id*=main_pic_norm] div[style*=position:relative] img src::text').extract()
-        
+        # instantiate Beer object and extracts the respective info from the page
         item = Beer()
         item['name'] = response.css('div.titleBar h1::text').extract_first()
         item['database'] = "Beer Advocate"
@@ -53,7 +41,7 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
         item['country'] = response.css('div.break a[href*=place] ::text')[1].extract()
         item['brewery_website'] = response.css('div.break a[href*=http] ::text').extract_first()
         item['style'] = response.css('div.break a[href*=styles] b::text').extract_first()
-        item['abv'] = response.css('div[id*=info_box]::text')[13].extract()[1:-1]#check if works everytime
+        item['abv'] = response.css('div[id*=info_box]::text')[13].extract()[1:-1] #check if works everytime
         item['availability'] = response.css('div[id*=info_box]::text')[15].extract()[1:-1]#remove space and new line
         item['description'] = response.css('div[id*=info_box]::text')[18].extract()[1:]
         yield item
@@ -61,7 +49,6 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
 
 
 class BeerSpiderSingleUntappdPage(scrapy.Spider):
-
     name = "beer-single-page-Un" # Spider identifier
     allowed_domains = [ # domains accessible by the crawler
         "untappd.com"
@@ -71,15 +58,13 @@ class BeerSpiderSingleUntappdPage(scrapy.Spider):
     ]
     
     def parse(self, response): # parse page content
-
         #img = response.css('div[class=basic] a[class=label] img').extract_first()[10:-2]
-        
         item = Beer()
         item['name'] = response.css('div[class=name] h1::text').extract_first()
         item['database'] = "Untappd"
         item['id'] = int(response.url.split('/')[5]) # at most 6 digits for BA beer IDs
         item['brewery'] = response.css('p[class=brewery] a::text').extract_first()
-        item['rating'] = response.css('span[class=num]::text').extract_first()[1:-1] # to remove parentesis
+        item['rating'] = response.css('span[class=num]::text').extract_first()[1:-1] # to remove parenthesis
         item['number_of_ratings'] = response.css('p[class=raters]::text').extract_first()[1:-9] # remove "Ratings" text and spaces
         item['date'] = response.css('p[class=date]::text').extract_first()[7:-1] # to remove "Added" text and spaces
         item['ibu'] = response.css('p[class=ibu]::text').extract_first()[1:-1] # spaces
