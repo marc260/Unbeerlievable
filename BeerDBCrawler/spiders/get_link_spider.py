@@ -22,8 +22,9 @@
 # look for response.css('div[id*=ba-content] b::text').extract_first()[7:]
 # this much and loop
 
-import scrapy
+# run with scrapy crawl get-links-BA -o links-BA-stout.json
 
+import scrapy
 
 class GetLinksBASpider(scrapy.Spider):
     name = "get-links-BA"
@@ -32,17 +33,14 @@ class GetLinksBASpider(scrapy.Spider):
         'https://www.beeradvocate.com/search/?q=stout&qt=beer&start=0'
     ]
 
-    # This it the field that says how many items were found in the search
-    limit = response.css('a[href*=profile]::attr(href)').extract()
-
     i = 25 # Advance by 25 each time
-    while i < limit:
-        urlToAdd = 'https://www.beeradvocate.com/search/?q=stout&qt=beer&start=' + str(i)
-        start_urls.append(urlToAdd)
+    while i < 17000:
+        new_url = 'https://www.beeradvocate.com/search/?q=stout&qt=beer&start=' + str(i)
+        start_urls.append(new_url)
         i += 25
 
     def parse(self, response):
-        for beerlink in response.css('body'):
+        for link in response.css('body'):
             yield {
-                'name': beerlink.css('ul li a[href*=profile]::attr(href)')[::2].extract()
+                'Link': link.css('a[href*=profile]::attr(href)')[::2].extract()
             }
