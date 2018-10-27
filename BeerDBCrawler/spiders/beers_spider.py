@@ -7,7 +7,14 @@ from BeerDBCrawler.items import Beer
 ## add imgUrls, and comments
 ## add ratebeerCrawler
 ## Ratebeer website rended by JS so selenium needs to be used with scrapy
+## export output to csv (custom pipeline)
+## multiple pages at a time
 
+# multiple pages:
+# search page response.css('a[href*=profile]::attr(href)').extract() 
+# in the https://www.beeradvocate.com/search/?q=stout&qt=beer&start=0
+# look for response.css('div[id*=ba-content] b::text').extract_first()[7:]
+# this much and loop
 
 # css slectors: https://css-tricks.com/almanac/selectors/a/attribute/
 #               https://www.w3schools.com/cssref/css_selectors.asp 
@@ -60,6 +67,8 @@ class BeerSpiderSingleBAPage(scrapy.Spider):
         item['availability'] = availability
         item['description'] = description
         yield item
+
+
 
 class BeerSpiderSingleUntappdPage(scrapy.Spider):
 
