@@ -77,26 +77,8 @@ class BASpider(scrapy.Spider):
     ]
     start_urls = [ # shortcut for start_requests method and url that will be accessed
         #"https://www.beeradvocate.com/beer/profile/23222/78820/"
-        "https://www.beeradvocate.com/beer"
+        #"https://www.beeradvocate.com/beer"
     ]
-
-    with open('links-BA.json') as listOfLinks:
-        data = json.load(listOfLinks)
-    #print(data)
-
-    print(data[0]["Link"][0])
-
-    seen = []
-    dup = []
-    for j in range(0, 3884):
-        #print("j = " + str(j))
-        for x in data[j]["Link"]:
-            if x not in seen:
-                seen.append(x)
-            else:
-                dup.append(x)
-    with open('noDuplicates.txt', 'w') as f:
-        print(seen, file=f)
 
     properList = []
     f = open('noDuplicates.txt', 'r')
@@ -123,7 +105,8 @@ class BASpider(scrapy.Spider):
         item['name'] = response.css('div.titleBar h1::text').extract_first()
         #item['database'] = "Beer Advocate"
         #item['id'] = int(response.url.split('/')[6]) # at most 6 digits for BA beer IDs
-        item['id'] = BA + response.url.split('/')[5] #unique ID in the form UN0123
+        id = int(response.url.split('/')[6])
+        item['id'] = "BA_" + str(id) #unique ID in the form UN0123
         item['brewery'] = response.css('div.titleBar h1 span::text').extract_first()[3:]
         item['rating'] = response.css('span.ba-ravg::text').extract_first()
         item['number_of_ratings'] = response.css('span.ba-ratings::text').extract_first()
@@ -158,7 +141,7 @@ class UNSpider(scrapy.Spider):
         item['name'] = response.css('div[class=name] h1::text').extract_first()
         #item['database'] = "Untappd"
         #item['id'] = int(response.url.split('/')[5]) # at most 6 digits for BA beer IDs
-        item['id'] = UN + response.url.split('/')[5] #unique ID in the form UN0123
+        item['id'] = "UN_" + response.url.split('/')[5] #unique ID in the form UN0123
         item['brewery'] = response.css('p[class=brewery] a::text').extract_first()
         item['rating'] = response.css('span[class=num]::text').extract_first()[1:-1] # to remove parenthesis
         item['number_of_ratings'] = response.css('p[class=raters]::text').extract_first()[1:-9] # remove "Ratings" text and spaces

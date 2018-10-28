@@ -20,10 +20,10 @@ class CSVOutputPipeline(object): # exports Item Object to .csv file
         return pipeline
 
     def spider_opened(self, spider):
-        self.file = open('output.csv', 'w+b')
+        self.file = open('output-BA-1000.csv', 'w+b')
         self.exporter = CsvItemExporter(self.file)
         # Force custom order:
-        self.exporter.fields_to_export = ['name', 'database', 'id', 'brewery', 'rating', 'number_of_ratings', 'ranking', 'number_of_reviews', 'date', 'ibu', 'pDev', 'state', 'country', 'brewery_website', 'style', 'abv', 'availability', 'description', 'img_url']
+        self.exporter.fields_to_export = ['id', 'name', 'brewery', 'rating', 'number_of_ratings', 'ranking', 'number_of_reviews', 'date', 'ibu', 'pDev', 'state', 'country', 'brewery_website', 'style', 'abv', 'availability', 'description', 'img_url']
         self.exporter.start_exporting()
 
     def spider_closed(self, spider):
