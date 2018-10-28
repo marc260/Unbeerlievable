@@ -9,6 +9,8 @@ from BeerDBCrawler.items import Beer
 ## add ratebeerCrawler
 ## Ratebeer website rended by JS so selenium needs to be used with scrapy
 
+# forgot to add IPA to style search....
+
 # css selectors: https://css-tricks.com/almanac/selectors/a/attribute/
 #               https://www.w3schools.com/cssref/css_selectors.asp 
 # xpath tutorial: https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html
@@ -127,6 +129,10 @@ class UNSpider(scrapy.Spider):
     start_urls = [ # shortcut for start_requests method and url that will be accessed
         "https://untappd.com/beer/131332"
     ]
+
+    limitID = 10000 # start with only 10000 pages since many do not exist
+    for i in range(0, limitID):
+        start_urls.append("https://untappd.com/beer/" + str(i))
     
     def parse(self, response): # parse page content
         item = Beer()
