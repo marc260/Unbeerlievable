@@ -18,10 +18,11 @@ class BASpider(scrapy.Spider):
     name = "BA" # Spider identifier
 
     # Remove duplicates from .json
-    
+    # and make duplicate/non-duplicate files easier to read and compare
+    # result: ~3k duplicates and ~94k non-duplicates
     '''
-    with open('links-BA.json') as urlList:
-        data = json.load(urlList)
+    with open('links-BA.json') as listOfLinks:
+        data = json.load(listOfLinks)
     #print(data)
 
     print(data[0]["Link"][0])
@@ -37,10 +38,36 @@ class BASpider(scrapy.Spider):
                 dup.append(x)
     with open('noDuplicates.txt', 'w') as f:
         print(seen, file=f) 
-    with open('Duplicates.txt', 'w') as f:
-        print(dup, file=f) 
-    '''
+    with open('duplicates.txt', 'w') as f:
+        print(dup, file=f)
+    
+    f = open('duplicates.txt', 'r')
+    x = f.read().split(',')
+    f.close()
+    properList = open("duplicatesv2.txt","w")
+        for k in range(len(x)):
+        properList.write(''.join(x[k].split('\'')[1:-1]) + "\n")
+    properList.close()
+    
 
+    properList = []
+    f = open('duplicates.txt', 'r')
+    x = f.read().split(',')
+    for k in range(len(x)):
+        properList.append(''.join(x[k].split('\'')[1:-1]))
+    f.close()
+    #print(properList[0])
+
+
+
+    f = open('noDuplicates.txt', 'r')
+    y = f.read().split(',')
+    f.close()
+    properList2 = open("noDuplicatesv2.txt","w")
+        for k in range(len(y)):
+        properList2.write(''.join(y[k].split('\'')[1:-1]) + "\n")
+    properList2.close()
+    '''
 
 
     allowed_domains = [ # domains accessible by the crawler
@@ -49,6 +76,26 @@ class BASpider(scrapy.Spider):
     start_urls = [ # shortcut for start_requests method and url that will be accessed
         "https://www.beeradvocate.com/beer/profile/23222/78820/"
     ]
+
+
+    properList = []
+    f = open('noDuplicates.txt', 'r')
+    x = f.read().split(',')
+    for k in range(len(x)):
+        properList.append(''.join(x[k].split('\'')[1:-1]))
+    f.close()
+    #print(properList[0])
+
+    listToCrawl = []
+    for url in properList:
+        if len(listToCrawl) != 1000:#only 1000 links to start with
+            listToCrawl.append(url)
+        else:
+            break
+
+    for url in listToCrawl:
+        newURL = "https://www.beeradvocate.com" + url
+        start_urls.append(newURL)
 
     def parse(self, response): # parse page content
         # instantiate Beer object and extracts the respective info from the page
