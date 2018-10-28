@@ -9,7 +9,7 @@ import scrapy
 
 class Beer(scrapy.Item):
     name = scrapy.Field() # field to specify metadata
-    database = scrapy.Field()
+    #database = scrapy.Field()
     id = scrapy.Field()
     brewery = scrapy.Field()
     rating = scrapy.Field()
