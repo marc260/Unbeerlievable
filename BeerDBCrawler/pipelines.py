@@ -9,7 +9,8 @@
 
 
 from scrapy import signals
-from scrapy.contrib.exporter import CsvItemExporter
+from scrapy.exporters import CsvItemExporter
+from scrapy.exporters import JsonItemExporter
 
 class CSVOutputPipeline(object): # exports Item Object to .csv file
     @classmethod
@@ -20,7 +21,7 @@ class CSVOutputPipeline(object): # exports Item Object to .csv file
         return pipeline
 
     def spider_opened(self, spider):
-        self.file = open('output-BA-1000.csv', 'w+b')
+        self.file = open('outputlll.csv', 'w+b')
         self.exporter = CsvItemExporter(self.file)
         # Force custom order:
         self.exporter.fields_to_export = ['id', 'name', 'brewery', 'rating', 'number_of_ratings', 'ranking', 'number_of_reviews', 'date', 'ibu', 'pDev', 'state', 'country', 'brewery_website', 'style', 'abv', 'availability', 'description', 'img_url']
@@ -34,6 +35,19 @@ class CSVOutputPipeline(object): # exports Item Object to .csv file
         self.exporter.export_item(item)
         return item
 
+class JsonPipeline(object):
+    def __init__(self):
+        self.file = open("test.json", 'wb')
+        self.exporter = JsonItemExporter(self.file, encoding='utf-8', ensure_ascii=False)
+        self.exporter.start_exporting()
+ 
+    def close_spider(self, spider):
+        self.exporter.finish_exporting()
+        self.file.close()
+ 
+    def process_item(self, item, spider):
+        self.exporter.export_item(item)
+        return item
 
 class BeerdbcrawlerPipeline(object):
     def process_item(self, item, spider):

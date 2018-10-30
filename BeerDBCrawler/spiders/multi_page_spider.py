@@ -1,4 +1,5 @@
 import scrapy
+import random
 
 from BeerDBCrawler.items import Beer
 #from selenium import webdriver # for dynamic websites rended by JS, like ratebeer
@@ -124,16 +125,17 @@ class BASpider(scrapy.Spider):
         yield item
 
 class UNSpider(scrapy.Spider):
-    name = "UN" # Spider identifier"https://www.beeradvocate.com/beer
-    allowed_domains = [ # domains a"https://www.beeradvocate.com/beer
+    name = "UN" 
+    allowed_domains = [ 
         "untappd.com"
     ]
     start_urls = [ # shortcut for start_requests method and url that will be accessed
-        "https://untappd.com/beer/131332"
+        #"https://untappd.com/beer/131332"
     ]
 
     limitID = 10000 # start with only 10000 pages since many do not exist
-    for i in range(0, limitID):
+    randList = random.sample(range(10000), 10000)
+    for i in randList:
         start_urls.append("https://untappd.com/beer/" + str(i))
     
     def parse(self, response): # parse page content
@@ -141,7 +143,8 @@ class UNSpider(scrapy.Spider):
         item['name'] = response.css('div[class=name] h1::text').extract_first()
         #item['database'] = "Untappd"
         #item['id'] = int(response.url.split('/')[5]) # at most 6 digits for BA beer IDs
-        item['id'] = "UN_" + response.url.split('/')[5] #unique ID in the form UN0123
+        id = response.url.split('/')[5]
+        item['id'] = "UN_" +  str(id) #unique ID in the form UN0123
         item['brewery'] = response.css('p[class=brewery] a::text').extract_first()
         item['rating'] = response.css('span[class=num]::text').extract_first()[1:-1] # to remove parenthesis
         item['number_of_ratings'] = response.css('p[class=raters]::text').extract_first()[1:-9] # remove "Ratings" text and spaces

@@ -35,7 +35,6 @@ class GetLinksBASpider(scrapy.Spider):
             new_url = 'https://www.beeradvocate.com/search/?q=' + str(style) + '&qt=beer&start=' + str(i)
             start_urls.append(new_url)
             i += 25
-    
 
     def parse(self, response):
         for link in response.css('body'):
