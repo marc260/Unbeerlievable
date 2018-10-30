@@ -3,3 +3,6 @@ node_modules/**/*
 resources/*
 yarn-error.log
 yarn.lock
+*.csv
+*.json
+*.txt
