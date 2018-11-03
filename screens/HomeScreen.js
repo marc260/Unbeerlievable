@@ -67,6 +67,12 @@ class HomeScreen extends React.Component {
                 onPress={this._gotoListScreen}
               />
             </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                title="DB"
+                onPress={this._requestDB}
+              />
+            </View>
             {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
             {this.state.Description?(<Text> 
             {this.state.Description} </Text>):(null)}
@@ -144,7 +150,21 @@ class HomeScreen extends React.Component {
           Description: actualDescription[0],
         });
         console.log(actualDescription[0]);
-
+        var search = actualDescription[0];
+        search = search.replace(/\n|\r/g, "");
+        const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
+          method: 'GET',
+          headers: {
+            'key1': search,
+            'x-api-key': LINK_WITH_API_KEY.api_aws,
+          },
+        });
+        console.log(res);
+        const test = await res.json();
+        console.log(test);
+        this.setState({
+          Description: test,
+        });
       }
     }
   };
@@ -209,7 +229,6 @@ class HomeScreen extends React.Component {
           Description: actualDescription[0],
         });
         console.log(actualDescription[0]);
-
       }
     }
   };
@@ -253,6 +272,22 @@ class HomeScreen extends React.Component {
   });
   console.log(actualDescription[0]);
 
+  };
+
+  _requestDB = async () =>{
+    const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
+      method: 'GET',
+      headers: {
+        'key1': 'Stout',
+        'x-api-key': 'ZMoSqqhCP45ar7425Wqyy4B7p9NCMTBr1wSzUnu9',
+      },
+    });
+    console.log(res);
+    const test = await res.json();
+    console.log(test);
+    this.setState({
+      Description: test,
+    });
   };
 }
 
