@@ -10,10 +10,14 @@ import {
   Button,
 } from 'react-native';
 import { ImagePicker, Permissions } from 'expo';
+import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
+
+
 
 import LINK_WITH_API_KEY from '../resources/link';
+import ListScreen from '../screens/ListScreen.js';
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
@@ -54,7 +58,13 @@ export default class HomeScreen extends React.Component {
             <View style={styles.buttonContainer}>
               <Button
                 title="Request OCR from URL"
-                onPress={this._getOCRFromApi}
+                onPress={this._gotoListScreen}
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                title="Beer List"
+                onPress={this._gotoListScreen}
               />
             </View>
             {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
@@ -65,7 +75,17 @@ export default class HomeScreen extends React.Component {
       </View>
     );
   }
-
+  
+  _gotoListScreen = async () => {
+    console.log(ListScreen);
+    this.props.navigation.dispatch(StackActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'BeerList' })
+      ],
+    }));
+  };
+  
   _pickImage = async () => {
     //check if permission was already granted
     const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
@@ -235,6 +255,19 @@ export default class HomeScreen extends React.Component {
 
   };
 }
+
+export default createStackNavigator({
+  Home: {
+    screen: HomeScreen,
+  },
+  BeerList: {
+    screen: ListScreen,
+  },
+}, {
+    initialRouteName: 'Home',
+});
+
+
 
 const styles = StyleSheet.create({
   container: {
