@@ -307,7 +307,7 @@ export default class HomeScreen extends React.Component {
       method: 'GET',
       headers: {
         'key1': 'Stout',
-        'x-api-key': 'ZMoSqqhCP45ar7425Wqyy4B7p9NCMTBr1wSzUnu9',
+        'x-api-key': LINK_WITH_API_KEY.api_aws,
       },
     });
     console.log(res);
