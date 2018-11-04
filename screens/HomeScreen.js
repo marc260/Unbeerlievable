@@ -130,12 +130,20 @@ export default class HomeScreen extends React.Component {
           Description: actualDescription[0],
         });
         console.log(actualDescription[0]);
-        var search = actualDescription[0];
-        search = search.replace(/\n|\r/g, "");
+        var googleVisionResult = actualDescription[0];
+
+        //separates lines from google API result
+        var lines = googleVisionResult.split("\n");
+        lines.pop();
+        for (let index = 0; index < lines.length; index++) {
+          console.log('Line ' + index + ' ' + lines[index]);
+        }
+        
+        //search = search.replace(/\n|\r/g, "");
         const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
           method: 'GET',
           headers: {
-            'key1': search,
+            'key1': lines[0],
             'x-api-key': LINK_WITH_API_KEY.api_aws,
           },
         });
