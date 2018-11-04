@@ -64,7 +64,7 @@ export default class HomeScreen extends React.Component {
               />
             </View>
             {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
-            
+          
             {this.state.Description?(<Text> OCR Result:
             {this.state.Description} </Text>):(null)}
 
@@ -155,11 +155,30 @@ export default class HomeScreen extends React.Component {
           });
           //console.log(res);
           const dbResult = await res.json();
-          console.log(test);
+          console.log(dbResult);
+
+          //stringfy obj
+          for (const [key, value] of Object.entries(dbResult)) {
+            console.log(`${key}: ${value}`);
+            fullResult.push(key + ": " + value + '\n');
+          }
+          fullResult.push('\n');
+          /*
           for (let j = 0; j < dbResult.length; j++) {
             fullResult.push(dbResult[j]);
           }
+          for (const [key, value] of Object.entries(dbResult)) {
+            console.log(key, value);
+            fullResult.push({
+              key: key,
+              value: value
+            });
+          }
+          */
+          //fullResult.push(Object.entries(dbResult));
+
         }
+        //console.log(fullResult);
         //present DB result to 
         this.setState({
           DBResult: fullResult,
