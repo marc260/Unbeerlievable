@@ -125,6 +125,7 @@ export default class HomeScreen extends React.Component {
         });
         const parsed = await response.json();
         //console.log(parsed);
+        //Parse google Vision API result
         var actualDescription = [];
         for (let i = 0; i < parsed.responses[0].textAnnotations.length; i++) {
           if (parsed.responses[0].textAnnotations[i].description)
@@ -136,9 +137,12 @@ export default class HomeScreen extends React.Component {
         console.log(actualDescription[0]);
         var googleVisionResult = actualDescription[0];
         var fullResult = [];
+
         //separates lines from google API result
         var lines = googleVisionResult.split("\n");
         lines.pop();
+
+        //loop through each line and send a get request to API gateway
         for (let index = 0; index < lines.length; index++) {
           console.log('Line ' + index + ' ' + lines[index]);
           //search = search.replace(/\n|\r/g, "");
@@ -150,13 +154,13 @@ export default class HomeScreen extends React.Component {
             },
           });
           //console.log(res);
-          const test = await res.json();
+          const dbResult = await res.json();
           console.log(test);
-          for (let j = 0; j < test.length; j++) {
-            fullResult.push(test[j]);
+          for (let j = 0; j < dbResult.length; j++) {
+            fullResult.push(dbResult[j]);
           }
         }
-        
+        //present DB result to 
         this.setState({
           DBResult: fullResult,
         });
