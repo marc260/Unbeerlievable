@@ -163,8 +163,6 @@ export default class HomeScreen extends React.Component {
         //loop through each line and send a get request to API gateway
         for (let index = 0; index < lines.length; index++) {
           console.log('Line ' + index + ' ' + lines[index]);
-
-          
           if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
               //search = search.replace(/\n|\r/g, "");
             const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
@@ -189,22 +187,6 @@ export default class HomeScreen extends React.Component {
               fullResult.push('\n');
             }
           } 
-          
-          
-          /*
-          for (let j = 0; j < dbResult.length; j++) {
-            fullResult.push(dbResult[j]);
-          }
-          for (const [key, value] of Object.entries(dbResult)) {
-            console.log(key, value);
-            fullResult.push({
-              key: key,
-              value: value
-            });
-          }
-          */
-          //fullResult.push(Object.entries(dbResult));
-
         }
         //console.log(fullResult);
         //present DB result to 
@@ -275,6 +257,46 @@ export default class HomeScreen extends React.Component {
           Description: actualDescription[0],
         });
         console.log(actualDescription[0]);
+        var googleVisionResult = actualDescription[0];
+        var fullResult = [];
+
+        //separates lines from google API result
+        var lines = googleVisionResult.split("\n");
+        lines.pop();//removes \n (last line that comes with the google vision result)
+
+        //loop through each line and send a get request to API gateway
+        for (let index = 0; index < lines.length; index++) {
+          console.log('Line ' + index + ' ' + lines[index]);
+          if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
+              //search = search.replace(/\n|\r/g, "");
+            const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
+              method: 'GET',
+              headers: {
+                'key1': lines[index],
+                'x-api-key': LINK_WITH_API_KEY.api_aws,
+              },
+            });
+            //console.log(res);
+            const dbResult = await res.json();
+            console.log(dbResult);
+
+            if (dbResult == null) {//if true there where no matches
+              fullResult.push(lines[index] + " returned with no matches.\n");
+            } else{//match found
+                //stringfy obj
+              for (const [key, value] of Object.entries(dbResult)) {
+                console.log(`${key}: ${value}`);
+                fullResult.push(key + ": " + value + '\n');
+              }
+              fullResult.push('\n');
+            }
+          } 
+        }
+        //console.log(fullResult);
+        //present DB result to 
+        this.setState({
+          DBResult: fullResult,
+        });
       }
     }
   };
@@ -320,6 +342,46 @@ export default class HomeScreen extends React.Component {
   });
   //console.log(actualDescription[0]);
   console.log(actualDescription[0]);
+  var googleVisionResult = actualDescription[0];
+  var fullResult = [];
+
+  //separates lines from google API result
+  var lines = googleVisionResult.split("\n");
+  lines.pop();//removes \n (last line that comes with the google vision result)
+
+  //loop through each line and send a get request to API gateway
+  for (let index = 0; index < lines.length; index++) {
+    console.log('Line ' + index + ' ' + lines[index]);
+    if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
+        //search = search.replace(/\n|\r/g, "");
+      const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
+        method: 'GET',
+        headers: {
+          'key1': lines[index],
+          'x-api-key': LINK_WITH_API_KEY.api_aws,
+        },
+      });
+      //console.log(res);
+      const dbResult = await res.json();
+      console.log(dbResult);
+
+      if (dbResult == null) {//if true there where no matches
+        fullResult.push(lines[index] + " returned with no matches.\n");
+      } else{//match found
+          //stringfy obj
+        for (const [key, value] of Object.entries(dbResult)) {
+          console.log(`${key}: ${value}`);
+          fullResult.push(key + ": " + value + '\n');
+        }
+        fullResult.push('\n');
+      }
+    } 
+  }
+  //console.log(fullResult);
+  //present DB result to 
+  this.setState({
+    DBResult: fullResult,
+  });
 
   };
 
