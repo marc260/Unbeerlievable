@@ -64,8 +64,12 @@ export default class HomeScreen extends React.Component {
               />
             </View>
             {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
-            {this.state.Description?(<Text> 
+            
+            {this.state.Description?(<Text> OCR Result:
             {this.state.Description} </Text>):(null)}
+
+            {this.state.DBResult?(<Text> DB Result:
+            {this.state.DBResult} </Text>):(null)}
           </View>
         </ScrollView>
       </View>
@@ -131,27 +135,30 @@ export default class HomeScreen extends React.Component {
         });
         console.log(actualDescription[0]);
         var googleVisionResult = actualDescription[0];
-
+        var fullResult = [];
         //separates lines from google API result
         var lines = googleVisionResult.split("\n");
         lines.pop();
         for (let index = 0; index < lines.length; index++) {
           console.log('Line ' + index + ' ' + lines[index]);
+          //search = search.replace(/\n|\r/g, "");
+          const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
+            method: 'GET',
+            headers: {
+              'key1': lines[index],
+              'x-api-key': LINK_WITH_API_KEY.api_aws,
+            },
+          });
+          //console.log(res);
+          const test = await res.json();
+          console.log(test);
+          for (let j = 0; j < test.length; j++) {
+            fullResult.push(test[j]);
+          }
         }
         
-        //search = search.replace(/\n|\r/g, "");
-        const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
-          method: 'GET',
-          headers: {
-            'key1': lines[0],
-            'x-api-key': LINK_WITH_API_KEY.api_aws,
-          },
-        });
-        console.log(res);
-        const test = await res.json();
-        console.log(test);
         this.setState({
-          Description: test,
+          DBResult: fullResult,
         });
       }
     }
