@@ -17,10 +17,20 @@ export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-
+  
+  constructor(props){
+    super(props)
+    this.state ={
+      TextInputValue:''
+    }
+  }
   state = {
     image: null,
   };
+  _getOCRFromApi1=()=>{
+    const{TextInputValue} =this.state
+    console.log(TextInputValue); 
+  }
 
 
   render() {
@@ -52,9 +62,16 @@ export default class HomeScreen extends React.Component {
               />
             </View>    
             <View style={styles.buttonContainer}>
+              <TextInput 
+                //style=({})
+                placeholder="Enter the URL"
+                onChangeText={TextInputValue => this.setState({TextInputValue})}
+
+              />
               <Button
                 title="Request OCR from URL"
                 onPress={this._getOCRFromApi}
+              
               />
             </View>
             <View style={styles.buttonContainer}>
@@ -262,12 +279,14 @@ export default class HomeScreen extends React.Component {
   };
 
   _getOCRFromApi = async () => {//for separate OCR testing
+    const{TextInputValue} =this.state
+    console.log(TextInputValue); 
     const body = {
       requests:[
         {
           image: {
             source: {
-              imageUri: "https://i.imgur.com/IuYOb09.jpg" //image URL
+              imageUri: TextInputValue //image URL
             }
           },
           features:[
@@ -298,6 +317,7 @@ export default class HomeScreen extends React.Component {
   this.setState({
     Description: actualDescription[0],
   });
+  //console.log(actualDescription[0]);
   console.log(actualDescription[0]);
 
   };
