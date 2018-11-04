@@ -13,6 +13,8 @@ import { ImagePicker, Permissions } from 'expo';
 
 import LINK_WITH_API_KEY from '../resources/link';
 
+import Hyperlink from 'react-native-hyperlink';
+
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -27,12 +29,7 @@ export default class HomeScreen extends React.Component {
   state = {
     image: null,
   };
-  _getOCRFromApi1=()=>{
-    const{TextInputValue} =this.state
-    console.log(TextInputValue); 
-  }
-
-
+ 
   render() {
     let { image } = this.state;
     return (
@@ -84,9 +81,13 @@ export default class HomeScreen extends React.Component {
           
             {this.state.Description?(<Text> OCR Result:
             {this.state.Description} </Text>):(null)}
-
-            {this.state.DBResult?(<Text> DB Result:
-            {this.state.DBResult} </Text>):(null)}
+            <Hyperlink linkDefault={ true } linkStyle={ { color: '#2980b9'} }>
+              {this.state.DBResult?(
+                  <Text> DB Result:
+                  {this.state.DBResult} 
+                  </Text>
+                ):(null)}
+            </Hyperlink>
           </View>
         </ScrollView>
       </View>
