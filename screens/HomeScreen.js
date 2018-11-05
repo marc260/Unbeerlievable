@@ -18,16 +18,23 @@ import LINK_WITH_API_KEY from '../resources/link';
 import ListScreen from './ListScreen/ListScreen.js';
 import MenuManager from './ListScreen/MenuManager.js';
 
+import Hyperlink from 'react-native-hyperlink';
+
 class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-
+  
+  constructor(props){
+    super(props)
+    this.state ={
+      TextInputValue:''
+    }
+  }
   state = {
     image: null,
   };
-
-
+ 
   render() {
     let { image } = this.state;
     return (
@@ -57,9 +64,16 @@ class HomeScreen extends React.Component {
               />
             </View>    
             <View style={styles.buttonContainer}>
+              <TextInput 
+                //style=({})
+                placeholder="Enter the URL"
+                onChangeText={TextInputValue => this.setState({TextInputValue})}
+
+              />
               <Button
                 title="Request OCR from URL"
                 onPress={this._getOCRFromApi}
+              
               />
             </View>
             <View style={styles.buttonContainer}>
@@ -78,9 +92,13 @@ class HomeScreen extends React.Component {
           
             {this.state.Description?(<Text> OCR Result:
             {this.state.Description} </Text>):(null)}
-
-            {this.state.DBResult?(<Text> DB Result:
-            {this.state.DBResult} </Text>):(null)}
+            <Hyperlink linkDefault={ true } linkStyle={ { color: '#2980b9'} }>
+              {this.state.DBResult?(
+                  <Text> DB Result:
+                  {this.state.DBResult} 
+                  </Text>
+                ):(null)}
+            </Hyperlink>
           </View>
         </ScrollView>
       </View>
@@ -168,8 +186,7 @@ class HomeScreen extends React.Component {
         
         //loop through each line and send a get request to API gateway
         for (let index = 0; index < lines.length; index++) {
-          //console.log('Line ' + index + ' ' + lines[index]);
-          
+          console.log('Line ' + index + ' ' + lines[index]);
           if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
               //search = search.replace(/\n|\r/g, "");
             const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
@@ -196,22 +213,6 @@ class HomeScreen extends React.Component {
               fullResult.push('\n');
             }
           } 
-          
-          
-          /*
-          for (let j = 0; j < dbResult.length; j++) {
-            fullResult.push(dbResult[j]);
-          }
-          for (const [key, value] of Object.entries(dbResult)) {
-            console.log(key, value);
-            fullResult.push({
-              key: key,
-              value: value
-            });
-          }
-          */
-          //fullResult.push(Object.entries(dbResult));
-
         }
         //console.log(fullResult);
         //present DB result to 
@@ -281,18 +282,64 @@ class HomeScreen extends React.Component {
         this.setState({
           Description: actualDescription[0],
         });
-        //console.log(actualDescription[0]);
+        console.log(actualDescription[0]);
+        var googleVisionResult = actualDescription[0];
+        var fullResult = [];
+
+        //separates lines from google API result
+        var lines = googleVisionResult.split("\n");
+        lines.pop();//removes \n (last line that comes with the google vision result)
+
+        MenuManager.push([]);
+
+        //loop through each line and send a get request to API gateway
+        for (let index = 0; index < lines.length; index++) {
+          console.log('Line ' + index + ' ' + lines[index]);
+          if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
+              //search = search.replace(/\n|\r/g, "");
+            const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
+              method: 'GET',
+              headers: {
+                'key1': lines[index],
+                'x-api-key': LINK_WITH_API_KEY.api_aws,
+              },
+            });
+            //console.log(res);
+            const dbResult = await res.json();
+            console.log(dbResult);
+
+            if (dbResult == null) {//if true there where no matches
+              fullResult.push(lines[index] + " returned with no matches.\n");
+            } else{//match found
+                //stringfy obj
+                MenuManager.getLastMenu().push({order: index+1});
+              for (const [key, value] of Object.entries(dbResult)) {
+                console.log(`${key}: ${value}`);
+                fullResult.push(key + ": " + value + '\n');
+                MenuManager.getLastMenuEntry()[key] = value;
+              }
+              fullResult.push('\n');
+            }
+          } 
+        }
+        //console.log(fullResult);
+        //present DB result to 
+        this.setState({
+          DBResult: fullResult,
+        });
       }
     }
   };
 
   _getOCRFromApi = async () => {//for separate OCR testing
+    const{TextInputValue} =this.state
+    console.log(TextInputValue); 
     const body = {
       requests:[
         {
           image: {
             source: {
-              imageUri: "https://i.imgur.com/IuYOb09.jpg" //image URL
+              imageUri: TextInputValue //image URL
             }
           },
           features:[
@@ -323,7 +370,48 @@ class HomeScreen extends React.Component {
   this.setState({
     Description: actualDescription[0],
   });
+  //console.log(actualDescription[0]);
   console.log(actualDescription[0]);
+  var googleVisionResult = actualDescription[0];
+  var fullResult = [];
+
+  //separates lines from google API result
+  var lines = googleVisionResult.split("\n");
+  lines.pop();//removes \n (last line that comes with the google vision result)
+
+  //loop through each line and send a get request to API gateway
+  for (let index = 0; index < lines.length; index++) {
+    console.log('Line ' + index + ' ' + lines[index]);
+    if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
+        //search = search.replace(/\n|\r/g, "");
+      const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
+        method: 'GET',
+        headers: {
+          'key1': lines[index],
+          'x-api-key': LINK_WITH_API_KEY.api_aws,
+        },
+      });
+      //console.log(res);
+      const dbResult = await res.json();
+      console.log(dbResult);
+
+      if (dbResult == null) {//if true there where no matches
+        fullResult.push(lines[index] + " returned with no matches.\n");
+      } else{//match found
+          //stringfy obj
+        for (const [key, value] of Object.entries(dbResult)) {
+          console.log(`${key}: ${value}`);
+          fullResult.push(key + ": " + value + '\n');
+        }
+        fullResult.push('\n');
+      }
+    } 
+  }
+  //console.log(fullResult);
+  //present DB result to 
+  this.setState({
+    DBResult: fullResult,
+  });
 
   };
 
@@ -332,7 +420,7 @@ class HomeScreen extends React.Component {
       method: 'GET',
       headers: {
         'key1': 'Stout',
-        'x-api-key': 'ZMoSqqhCP45ar7425Wqyy4B7p9NCMTBr1wSzUnu9',
+        'x-api-key': LINK_WITH_API_KEY.api_aws,
       },
     });
     console.log(res);
