@@ -401,9 +401,11 @@ class HomeScreen extends React.Component {
         fullResult.push(lines[index] + " returned with no matches.\n");
       } else{//match found
           //stringfy obj
+          MenuManager.getLastMenu().push({order: index+1});
         for (const [key, value] of Object.entries(dbResult)) {
           console.log(`${key}: ${value}`);
           fullResult.push(key + ": " + value + '\n');
+          MenuManager.getLastMenuEntry()[key] = value;
         }
         fullResult.push('\n');
       }
