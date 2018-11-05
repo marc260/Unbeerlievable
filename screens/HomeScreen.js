@@ -312,7 +312,7 @@ class HomeScreen extends React.Component {
               fullResult.push(lines[index] + " returned with no matches.\n");
             } else{//match found
                 //stringfy obj
-                MenuManager.getLastMenu().push({order: index+1});
+              MenuManager.getLastMenu().push({order: index+1});
               for (const [key, value] of Object.entries(dbResult)) {
                 console.log(`${key}: ${value}`);
                 fullResult.push(key + ": " + value + '\n');
@@ -379,6 +379,8 @@ class HomeScreen extends React.Component {
   var lines = googleVisionResult.split("\n");
   lines.pop();//removes \n (last line that comes with the google vision result)
 
+  MenuManager.push([]);
+  
   //loop through each line and send a get request to API gateway
   for (let index = 0; index < lines.length; index++) {
     console.log('Line ' + index + ' ' + lines[index]);
