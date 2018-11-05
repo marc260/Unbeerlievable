@@ -15,7 +15,7 @@ import { createStackNavigator, StackActions, NavigationActions } from 'react-nav
 
 
 import LINK_WITH_API_KEY from '../resources/link';
-import ListScreen from '../screens/ListScreen.js';
+import ListScreen from './ListScreen/ListScreen.js';
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -58,7 +58,7 @@ class HomeScreen extends React.Component {
             <View style={styles.buttonContainer}>
               <Button
                 title="Request OCR from URL"
-                onPress={this._gotoListScreen}
+                onPress={this._getOCRFromApi}
               />
             </View>
             <View style={styles.buttonContainer}>
@@ -87,7 +87,6 @@ class HomeScreen extends React.Component {
   }
   
   _gotoListScreen = async () => {
-    console.log(ListScreen);
     this.props.navigation.dispatch(StackActions.reset({
       index: 0,
       actions: [
@@ -112,13 +111,12 @@ class HomeScreen extends React.Component {
         aspect: [4, 3],
         base64: true,
       });
-      console.log(result);
-  
+      //console.log(result);
+  console.log("here\n");
       if (!result.cancelled) {
         this.setState({
           image: result.uri,
         });
-        
         let body = {
           "requests": [
             {
@@ -134,7 +132,6 @@ class HomeScreen extends React.Component {
             }
           ]
         }
-
         const response = await fetch(LINK_WITH_API_KEY.link, {
           method: 'POST',
           headers: {
@@ -144,7 +141,6 @@ class HomeScreen extends React.Component {
           body: JSON.stringify(body),
         });
         const parsed = await response.json();
-        //console.log(parsed);
         //Parse google Vision API result
         var actualDescription = [];
         for (let i = 0; i < parsed.responses[0].textAnnotations.length; i++) {
@@ -154,7 +150,7 @@ class HomeScreen extends React.Component {
         this.setState({
           Description: actualDescription[0],
         });
-        console.log(actualDescription[0]);
+        //console.log("actualDescription[0]:\n",actualDescription[0]);
         var googleVisionResult = actualDescription[0];
         var fullResult = [];
 
@@ -164,7 +160,7 @@ class HomeScreen extends React.Component {
 
         //loop through each line and send a get request to API gateway
         for (let index = 0; index < lines.length; index++) {
-          console.log('Line ' + index + ' ' + lines[index]);
+          //console.log('Line ' + index + ' ' + lines[index]);
 
           
           if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
@@ -178,7 +174,7 @@ class HomeScreen extends React.Component {
             });
             //console.log(res);
             const dbResult = await res.json();
-            console.log(dbResult);
+            console.log("dbResult:\n",dbResult);
 
             if (dbResult == null) {//if true there where no matches
               fullResult.push(lines[index] + " returned with no matches.\n");
@@ -235,7 +231,7 @@ class HomeScreen extends React.Component {
         base64: true,
       });
   
-      console.log(result);
+      //console.log(result);
   
       if (!result.cancelled) {
         this.setState({ image: result.uri });
@@ -276,7 +272,7 @@ class HomeScreen extends React.Component {
         this.setState({
           Description: actualDescription[0],
         });
-        console.log(actualDescription[0]);
+        //console.log(actualDescription[0]);
       }
     }
   };
