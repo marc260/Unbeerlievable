@@ -9,7 +9,8 @@ import {
   View,
   Button,
   TouchableOpacity,
-  Animated
+  Animated,
+  Alert
 } from 'react-native';
 
 import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
@@ -41,9 +42,9 @@ export default class BeerTable extends React.Component {
   //object containing all columns known by the table
   columns = {
     order: new Column("order","", sortOrder.ASCENDING,20),
-    name: new Column("name","Name",sortOrder.ASCENDING,200),
-    rating: new Column("rating","Rating",sortOrder.DESCENDING,200),
-    numRatings: new Column("numRatings","Number of Ratings",sortOrder.DESCENDING,200),
+    name: new Column("name","Name",sortOrder.ASCENDING,250),
+    rating: new Column("rating","Rating",sortOrder.DESCENDING,100),
+    numRatings: new Column("numRatings","Number of Ratings",sortOrder.DESCENDING,300),
     abv: new Column("abv","Alc. by vol.",sortOrder.DESCENDING,200),
     brewery: new Column("brewery","Brewery",sortOrder.ASCENDING,200),
     price: new Column("price","Price",sortOrder.ASCENDING,200)
@@ -68,8 +69,9 @@ export default class BeerTable extends React.Component {
                     </Text>
                     <View alignContent='flex-end'>
                       <TouchableOpacity color='#00000000' backgroundColor='#00000000' onPress={() => {this._selectHeader(col)}}>
-                        <Animated.Image minHeight={32} minWidth={32} maxHeight={32} maxWidth={32} flex={-1} source={require("../../assets/images/arrow.png")}
-                          style={[this.Rotate_Y_AnimatedStyle, styles.imageViewStyle]}>
+                        <Animated.Image 
+                          style={{minHeight: 24, minWidth: 24, maxHeight:24, maxWidth:24, flex: -1}} source={require("../../assets/images/arrow.png")}
+                          /* style={[this.Rotate_Y_AnimatedStyle, styles.imageViewStyle]} */>
                         </Animated.Image>
                       </TouchableOpacity>
                     </View>
@@ -87,7 +89,7 @@ export default class BeerTable extends React.Component {
       <View key={i} style={{minHeight:40, borderWidth:0, padding: 0, flex: 5, alignSelf: 'stretch', flexDirection: 'row' }}>
           {
             this.visibleColumns.map( (col, j) => {
-              if(beer[col.key] !== "undefined"){
+              if(typeof beer[col.key] !== "undefined"){
                 return (
                   <View key={j} style={{borderWidth:1, minWidth: 40, width:col.width, alignSelf: 'stretch', flex:-1}}>
                     <Text>
@@ -177,7 +179,7 @@ export default class BeerTable extends React.Component {
   
   //called when a beer is selected
   _selectBeer = function(beer) {
-    alert(beer.description!=="undefined" ? beer.description : "No detailed information on this beer.");
+    Alert.alert('Details',beer.description!=="undefined" ? beer.description : "No detailed information on this beer.");
   }
   
   //called when a column's header is tapped

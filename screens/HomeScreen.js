@@ -16,6 +16,7 @@ import { createStackNavigator, StackActions, NavigationActions } from 'react-nav
 
 import LINK_WITH_API_KEY from '../resources/link';
 import ListScreen from './ListScreen/ListScreen.js';
+import MenuManager from './ListScreen/MenuManager.js';
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -63,7 +64,7 @@ class HomeScreen extends React.Component {
             </View>
             <View style={styles.buttonContainer}>
               <Button
-                title="Beer List"
+                title="Go to Beer List"
                 onPress={this._gotoListScreen}
               />
             </View>
@@ -87,12 +88,17 @@ class HomeScreen extends React.Component {
   }
   
   _gotoListScreen = async () => {
-    this.props.navigation.dispatch(StackActions.reset({
-      index: 0,
-      actions: [
-        NavigationActions.navigate({ routeName: 'BeerList' })
-      ],
-    }));
+    if(MenuManager.isEmpty()){
+      alert("You haven't scanned any menus yet!");
+    }
+    else{
+      this.props.navigation.dispatch(StackActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'BeerList' })
+        ],
+      }));
+    }
   };
   
   _pickImage = async () => {
@@ -112,7 +118,7 @@ class HomeScreen extends React.Component {
         base64: true,
       });
       //console.log(result);
-  console.log("here\n");
+
       if (!result.cancelled) {
         this.setState({
           image: result.uri,
@@ -158,10 +164,11 @@ class HomeScreen extends React.Component {
         var lines = googleVisionResult.split("\n");
         lines.pop();//removes \n (last line that comes with the google vision result)
 
+        MenuManager.push([]);
+        
         //loop through each line and send a get request to API gateway
         for (let index = 0; index < lines.length; index++) {
           //console.log('Line ' + index + ' ' + lines[index]);
-
           
           if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
               //search = search.replace(/\n|\r/g, "");
@@ -175,14 +182,16 @@ class HomeScreen extends React.Component {
             //console.log(res);
             const dbResult = await res.json();
             console.log("dbResult:\n",dbResult);
-
+            
             if (dbResult == null) {//if true there where no matches
               fullResult.push(lines[index] + " returned with no matches.\n");
             } else{//match found
                 //stringfy obj
+              MenuManager.getLastMenu().push({order: index+1});
               for (const [key, value] of Object.entries(dbResult)) {
                 console.log(`${key}: ${value}`);
                 fullResult.push(key + ": " + value + '\n');
+                MenuManager.getLastMenuEntry()[key] = value;
               }
               fullResult.push('\n');
             }

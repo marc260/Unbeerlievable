@@ -12,6 +12,7 @@ import {
 
 import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
 import BeerTable from './BeerTable.js';  
+import MenuManager from './MenuManager.js'
 
 export default class ListScreen extends React.Component {
   
@@ -25,11 +26,13 @@ export default class ListScreen extends React.Component {
     { order: 3, name: "Abcd", rating: 3},
   ];
   state = {
-    table: new BeerTable(this.Menu, (Table) => { this.forceUpdate(); }),
+    table: new BeerTable(MenuManager.getLastMenu(), (Table) => { this.forceUpdate(); }),
   };
   
+  
+  
   //member functions
-  render() {
+  render() {/* alert(JSON.stringify(MenuManager.getLastMenu())); */
     return (
       <ScrollView style={styles.container}>
         <View>
@@ -51,10 +54,8 @@ export default class ListScreen extends React.Component {
       </ScrollView>
     );
   }
+
   
-  tableUpdate = function(Table){
-    this.setState({table: Table});
-  }
 }
 
 const styles = StyleSheet.create({
