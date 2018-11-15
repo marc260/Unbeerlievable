@@ -21,6 +21,8 @@ var sortOrder = {
   DESCENDING: -1,
 }
 
+//helper classes
+
 class Column {
   constructor(key,label, order, width){
     this.key = key;
@@ -30,10 +32,20 @@ class Column {
   }
 }
 
+class Filter {
+  constructor(col, comparison, value){
+    this.col = col;
+    this.comparison = comparison;
+    this.value = value;
+  }
+}
+
 export default class BeerTable extends React.Component {
   constructor(Menu, UpdateCallback){
     super();
     
+    this.Filter = Filter;
+    this.Column = Column;
     this.menu = Menu; //menu is an array of Beers
     this.updateCallback= UpdateCallback; //this function is called whenever the table is updated
   }
@@ -53,6 +65,17 @@ export default class BeerTable extends React.Component {
   visibleColumns = [this.columns.order, this.columns.name,this.columns.rating];
   //sortByColumns = array of columns used for sorting, in order of precedence
   sortByColumns = this.visibleColumns.slice();
+  //activeFilters = currently active filters (default none)
+  activeFilters = [];
+  
+  //enumerated constants
+  comparisonType = {
+    LESS_THAN: function(a,b) {a < b},
+    LESS_THAN_OR_EQUAL_TO: function(a,b) {a <= b},
+    EQUAL_TO: function(a,b) {a == b},
+    GREATER_THAN_OR_EQUAL_TO: function(a,b) {a >= b},
+    GREATER_THAN: function(a,b) {a > b},
+  }
   
   //Member functions
   
@@ -85,6 +108,14 @@ export default class BeerTable extends React.Component {
   
   //Renders one row, with information about one beer
   renderRow = function(beer, i) {
+    for(let f of this.activeFilters){
+      if(typeof beer[f.col.key] !== "undefined"){
+        console.log("FILTER:",beer[f.col.key],f.value,f.comparison(beer[f.col.key],f.value));
+        if(!f.comparison(beer[f.col.key],f.value)){
+          return;
+        }
+      }
+    }
     return (
       <View key={i} style={{minHeight:40, borderWidth:0, padding: 0, flex: 5, alignSelf: 'stretch', flexDirection: 'row' }}>
           {
@@ -159,6 +190,7 @@ export default class BeerTable extends React.Component {
     }
     else this.sortByColumns.unshift(this.sortByColumns.splice(this.sortByColumns.indexOf(col),1)[0]);
     console.log(this.sortByColumns);
+    console.log(this.activeFilters);
     
     let sortByColumns = this.sortByColumns;
     this.menu.sort(function (a,b){
@@ -175,6 +207,12 @@ export default class BeerTable extends React.Component {
       return cmp;
     })
     
+  }
+  
+  //should be called externally- adds the filter to the list
+  addFilter = function(filter) {
+    this.activeFilters.push(filter);
+    if(typeof this.updateCallback==="function")this.updateCallback(this);
   }
   
   //called when a beer is selected
