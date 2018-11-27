@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
   Button,
+  TouchableOpacity,
 } from 'react-native';
 import { ImagePicker, Permissions } from 'expo';
 import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
@@ -22,7 +23,16 @@ import Hyperlink from 'react-native-hyperlink';
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
-    header: null,
+    title: 'Unbeerlievable',
+    headerBackground: (
+      <Image
+        style={StyleSheet.absoluteFill}
+        source={{ uri: 'https://assets.simpleviewcms.com/simpleview/image/fetch/q_75/https://res.cloudinary.com/simpleview/image/upload/crm/denver/23978_20090729_23978_DenverMircrobrewTour_ff0fca09-ee1e-51ac-30131aa5f4a7265f.jpg' }}
+      />
+    ),
+    headerTitleStyle: { color: '#fff' },
+    headerMode:'Screen',
+    cardStyle:{backgroundColor:'#000000'},
   };
   
   constructor(props){
@@ -38,18 +48,38 @@ class HomeScreen extends React.Component {
   render() {
     let { image } = this.state;
     return (
+      
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/logo.png')//our logo
-                  : require('../assets/images/robot-prod.png')
-              }
-              style={styles.welcomeImage}
-            />
-          </View>
+          
+
+        <TouchableOpacity style={styles.welcomeContainer} onPress={this._pickImage}>
+          <Image
+            style={styles.welcomeImage}
+            source={__DEV__
+              ? require('../assets/images/logo.png')//our logo
+              : require('../assets/images/robot-prod.png')}
+          />
+        </TouchableOpacity>
+
+        <View style={styles.buttonContainer}>
+              <TextInput 
+                style={styles.holderStyle}
+                placeholder="Enter the URL"
+                onChangeText={TextInputValue => this.setState({TextInputValue})}
+
+              />
+              <Button
+                style={styles.buttonHolder}
+                title="Upload URL"
+                onPress={this._getOCRFromApi}
+              
+              />
+        </View>
+
+
+
+
           <View style={styles.getStartedContainer}>
             <View style={styles.buttonContainer}>
               <Button
@@ -462,12 +492,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 0,
   },
   welcomeContainer: {
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
@@ -475,6 +503,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginTop: 3,
     marginLeft: -10,
+    alignItems:'center',
   },
   buttonContainer: {
     margin: 10,
@@ -527,9 +556,9 @@ const styles = StyleSheet.create({
     color: 'rgba(96,100,109, 1)',
     textAlign: 'center',
   },
-  navigationFilename: {
+  /*navigationFilename: {
     marginTop: 5,
-  },
+  },*/
   helpContainer: {
     marginTop: 15,
     alignItems: 'center',
@@ -540,5 +569,21 @@ const styles = StyleSheet.create({
   helpLinkText: {
     fontSize: 14,
     color: '#2e78b7',
+  },
+
+buttonHolder:{
+  margin:10,
+  position:'absolute',
+  bottom:0,
+  left:0,
+},
+holderStyle:{
+  height:55,
+  backgroundColor :'white',
+  elevation:3,
+  paddingHorizontal:15,
+  flexDirection:'row',
+  alignItems:'center',
+
   },
 });
