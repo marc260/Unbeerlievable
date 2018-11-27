@@ -76,7 +76,7 @@ class HomeScreen extends React.Component {
   }
   
   _gotoListScreen = async () => {
-    if(MenuManager.isEmpty()){
+    if(MenuManager.isEmpty() || MenuManager.isNull()){
       alert("You haven't scanned any menus yet!");
     }
     else{

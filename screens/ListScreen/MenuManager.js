@@ -30,6 +30,13 @@ class MenuManager{
   isEmpty() {
     return this._data.length == 0;
   }
+
+  isNull() {
+    if (this._data[0][0] == null)
+      return true;
+    else
+      return false;
+  }
 }
 
 
