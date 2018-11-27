@@ -10,6 +10,7 @@ import {
   Button,
   TouchableOpacity,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ImagePicker, Permissions } from 'expo';
 import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
 
@@ -51,16 +52,33 @@ class HomeScreen extends React.Component {
       
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          
-
         <TouchableOpacity style={styles.welcomeContainer} onPress={this._pickImage}>
           <Image
             style={styles.welcomeImage}
             source={__DEV__
               ? require('../assets/images/logo.png')//our logo
               : require('../assets/images/robot-prod.png')}
+              
           />
+          <Text>
+            Upload from gallery
+          </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.welcomeContainer} onPress={this._pickImageFromCamera}>
+          <Icon
+            style={styles.navItem}
+            name="local-see" size={65}
+          />
+
+          <Text>
+            Upload from camera
+          </Text>
+
+          
+          
+        </TouchableOpacity>
+
 
         <View style={styles.buttonContainer}>
               <TextInput 
@@ -78,46 +96,15 @@ class HomeScreen extends React.Component {
         </View>
 
 
-
-
           <View style={styles.getStartedContainer}>
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Pick an image from Gallery"
-                onPress={this._pickImage}
-              />
-            </View>
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Pick an image from Camera Roll"
-                onPress={this._pickImageFromCamera}
-              />
-            </View>    
-            <View style={styles.buttonContainer}>
-              <TextInput 
-                //style=({})
-                placeholder="Enter the URL"
-                onChangeText={TextInputValue => this.setState({TextInputValue})}
-
-              />
-              <Button
-                title="Request OCR from URL"
-                onPress={this._getOCRFromApi}
-              
-              />
-            </View>
+            
             <View style={styles.buttonContainer}>
               <Button
                 title="Go to Beer List"
                 onPress={this._gotoListScreen}
               />
             </View>
-            <View style={styles.buttonContainer}>
-              <Button
-                title="DB"
-                onPress={this._requestDB}
-              />
-            </View>
+           
             {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
           
             {this.state.Description?(<Text> OCR Result:
@@ -469,6 +456,7 @@ class HomeScreen extends React.Component {
 export default createStackNavigator({
   Home: {
     screen: HomeScreen,
+    headermode:'none'
   },
   BeerList: {
     screen: ListScreen,
@@ -496,12 +484,14 @@ const styles = StyleSheet.create({
   },
   welcomeContainer: {
     alignItems: 'center',
+    marginHorizontal:10,
+    flex:1,
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: 'contain',
-    marginTop: 3,
+    marginTop: 10,
     marginLeft: -10,
     alignItems:'center',
   },
@@ -586,4 +576,7 @@ holderStyle:{
   alignItems:'center',
 
   },
+navItem: {
+  marginTop:20,
+}
 });
