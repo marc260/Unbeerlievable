@@ -103,7 +103,7 @@ class CameraUploadButton extends React.Component{
               const dbResult = await res.json();
 
               if (dbResult == null) {//if true there where no matches
-                alert("The database returned no matches!");
+                //alert("The database returned no matches!");
               } else{//match found
                   //stringfy obj
                 MenuManager.getLastMenu().push({order: index+1});
@@ -112,6 +112,9 @@ class CameraUploadButton extends React.Component{
                 }
               }
             } 
+          }
+          if (MenuManager.isNull()) {
+            alert("The database returned no matches!");
           }
         } catch (error) {
           //console.log("NO DATA!");
