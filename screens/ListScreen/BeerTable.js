@@ -71,7 +71,7 @@ export default class BeerTable extends React.Component {
     price: new Column("price","Price",sortOrder.ASCENDING,200)
   };
   //visible columns = columns actually shown, in the order of drawing
-  visibleColumns = [this.columns.order, this.columns.name,this.columns.rating];
+  visibleColumns = [this.columns.order, this.columns.name,this.columns.rating, this.columns.abv,this.columns.brewery];
   //sortByColumns = array of columns used for sorting, in order of precedence
   sortByColumns = this.visibleColumns.slice();
   //activeFilters = currently active filters (default none)

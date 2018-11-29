@@ -15,6 +15,7 @@ class CameraUploadButton extends React.Component{
   render() {
     return (
       <View style={styles.center}>
+      {/*Clickable image and text*/}
         <TouchableOpacity style={styles.welcomeContainer} onPress={this._pickImageFromCamera}>
           <Icon
             style={styles.navItem}
@@ -39,15 +40,18 @@ class CameraUploadButton extends React.Component{
         }
     }
     else {
+      //Obtain image
       let result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
         aspect: [4, 3],
         base64: true,
       });
-  
+      
+      //If the user has not canceled the selection
       if (!result.cancelled) {
         //this.setState({ image: result.uri });
-  
+        
+        //Body of Google Vision (OCR) API request
         let body = {
           "requests": [
             {
@@ -91,8 +95,8 @@ class CameraUploadButton extends React.Component{
 
           //loop through each line and send a get request to API gateway
           for (let index = 0; index < lines.length; index++) {
-            if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
-                //search = search.replace(/\n|\r/g, "");
+            //dont query if there are any $ in the beginning of the word (prices)
+            if (lines[index].charAt(0) != '$') { 
               const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
                 method: 'GET',
                 headers: {
@@ -105,7 +109,7 @@ class CameraUploadButton extends React.Component{
               if (dbResult == null) {//if true there where no matches
                 //alert("The database returned no matches!");
               } else{//match found
-                  //stringfy obj
+                //Push query result to Beerlist
                 MenuManager.getLastMenu().push({order: index+1});
                 for (const [key, value] of Object.entries(dbResult)) {
                   MenuManager.getLastMenuEntry()[key] = value;
@@ -116,8 +120,9 @@ class CameraUploadButton extends React.Component{
           if (MenuManager.isNull()) {
             alert("The database returned no matches!");
           }
+          else
+            alert("Your list is ready!");
         } catch (error) {
-          //console.log("NO DATA!");
           alert("No text detected!");
         }
       }

@@ -10,8 +10,6 @@ import {
   Button,
   TouchableOpacity,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ImagePicker, Permissions } from 'expo';
 import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
 import LINK_WITH_API_KEY from '../resources/link';
 import ListScreen from './ListScreen/ListScreen.js';
@@ -19,9 +17,8 @@ import MenuManager from './ListScreen/MenuManager.js';
 import CameraUploadButton from '../components/CameraUploadButton.js';
 import GalleryUploadButton from '../components/GalleryUploadButton.js';
 
-import Hyperlink from 'react-native-hyperlink';
-
 class HomeScreen extends React.Component {
+  //Settings for header
   static navigationOptions = {
     title: 'Unbeerlievable',
     headerBackground: (
@@ -31,8 +28,6 @@ class HomeScreen extends React.Component {
       />
     ),
     headerTitleStyle: { color: '#fff' },
-    headerMode:'Screen',
-    cardStyle:{backgroundColor:'#000000'},
   };
   
   constructor(props){
@@ -45,7 +40,6 @@ class HomeScreen extends React.Component {
  
   render() {
     return (
-      
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <GalleryUploadButton/>
@@ -75,10 +69,13 @@ class HomeScreen extends React.Component {
     );
   }
   
+  //Invokes rerouting to ListScreen if not empty
   _gotoListScreen = async () => {
+    //If Beerlist is not empty or has only been initialized but not populated do not open ListScreen
     if(MenuManager.isEmpty() || MenuManager.isNull()){
       alert("You haven't scanned any menus yet!");
     }
+    //Else, open ListScreen
     else{
       this.props.navigation.dispatch(StackActions.reset({
         index: 0,
@@ -89,9 +86,11 @@ class HomeScreen extends React.Component {
     }
   };
 
-  _getOCRFromURL = async () => {//for separate OCR testing
+  _getOCRFromURL = async () => {
     try {
       const{TextInputValue} =this.state
+
+      //Body of Google Vision (OCR) API request
       const body = {
         requests:[
           {
@@ -109,59 +108,63 @@ class HomeScreen extends React.Component {
           },
         ],
       };
+      
+      //Fetch response from Google Vision API
+      const response = await fetch(LINK_WITH_API_KEY.link, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
 
-    const response = await fetch(LINK_WITH_API_KEY.link, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    const parsed = await response.json();
-    var actualDescription = [];
-    for (let i = 0; i < parsed.responses[0].textAnnotations.length; i++) {
-      if (parsed.responses[0].textAnnotations[i].description)
-      actualDescription.push(parsed.responses[0].textAnnotations[i].description);
-    }
-    var googleVisionResult = actualDescription[0];
-    var fullResult = [];
+      //Response parsing procedure
+      const parsed = await response.json();
+      var actualDescription = [];
+      for (let i = 0; i < parsed.responses[0].textAnnotations.length; i++) {
+        if (parsed.responses[0].textAnnotations[i].description)
+        actualDescription.push(parsed.responses[0].textAnnotations[i].description);
+      }
+      var googleVisionResult = actualDescription[0];
 
-    //separates lines from google API result
-    var lines = googleVisionResult.split("\n");
-    lines.pop();//removes \n (last line that comes with the google vision result)
+      //separates lines from google API result
+      var lines = googleVisionResult.split("\n");
+      lines.pop();//removes \n (last line that comes with the google vision result)
 
-    MenuManager.push([]);
-    
-    //loop through each line and send a get request to API gateway
-    for (let index = 0; index < lines.length; index++) {
-      if (lines[index].charAt(0) != '$') { //dont query if there are any $ in the begging of the word (prices)
-          //search = search.replace(/\n|\r/g, "");
-        const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
-          method: 'GET',
-          headers: {
-            'key1': lines[index],
-            'x-api-key': LINK_WITH_API_KEY.api_aws,
-          },
-        });
-        //console.log(res);
-        const dbResult = await res.json();
+      MenuManager.push([]);//Initialize Beerlist
+      
+      //loop through each line and send a get request to API gateway
+      for (let index = 0; index < lines.length; index++) {
 
-        if (dbResult == null) {//if true there where no matches
-          //alert("The database returned no matches!");
-        } else{//match found
-            //stringfy obj
+        //dont query if there are any $ in the beginning of the word (prices)
+        if (lines[index].charAt(0) != '$') { 
+          //Fetch response from AWS API gateway
+          const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
+            method: 'GET',
+            headers: {
+              'key1': lines[index],
+              'x-api-key': LINK_WITH_API_KEY.api_aws,
+            },
+          });
+          const dbResult = await res.json();
+
+          if (dbResult == null) {//if true there where no matches
+            //alert("The database returned no matches!");
+          } else{//match found
+            //Push query result to Beerlist
             MenuManager.getLastMenu().push({order: index+1});
-          for (const [key, value] of Object.entries(dbResult)) {
-            MenuManager.getLastMenuEntry()[key] = value;
+            for (const [key, value] of Object.entries(dbResult)) {
+              MenuManager.getLastMenuEntry()[key] = value;
+            }
           }
-          fullResult.push('\n');
-        }
-      } 
-    }
-    if (MenuManager.isNull()) {
-      alert("The database returned no matches!");
-    }
+        } 
+      }
+      if (MenuManager.isNull()) {
+        alert("The database returned no matches!");
+      }
+      else
+        alert("Your list is ready!");
     } catch (error) {
       alert("An error has occurred, are you sure you typed correctly?");
     }
@@ -169,31 +172,10 @@ class HomeScreen extends React.Component {
   };
 }
 
-export default createStackNavigator({
-  Home: {
-    screen: HomeScreen,
-    headerMode:'none'
-  },
-  BeerList: {
-    screen: ListScreen,
-  },
-}, {
-    initialRouteName: 'Home'
-});
-
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff'
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
   },
   contentContainer: {
     paddingTop: 0,
@@ -220,37 +202,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  buttonHolder:{
-    margin:10,
-    position:'absolute',
-    bottom:0,
-    left:0,
-  },
   holderStyle:{
     height:55,
     backgroundColor :'white',
@@ -263,4 +214,19 @@ const styles = StyleSheet.create({
 navItem: {
   marginTop:20,
 }
+});
+
+// Takes route configuration object and an options object and returns a React component
+// Config: 2 routes home and list screens
+// options: initial route home
+// Returns: the React component to route to
+export default createStackNavigator({
+  Home: {
+    screen: HomeScreen,
+  },
+  BeerList: {
+    screen: ListScreen,
+  },
+}, {
+    initialRouteName: 'Home',
 });
