@@ -57,6 +57,27 @@ export default class BeerTable extends React.Component {
     this.Column = Column;
     this.menu = Menu; //menu is an array of Beers
     this.updateCallback= UpdateCallback; //this function is called whenever the table is updated
+    
+    //helper function for parsing an object
+    //returns eiter its float representation or itself
+    var _tryFloat = function(a) {return isNaN(parseFloat(a)) ? a : parseFloat(a)}
+    
+    //public enumeration of comparison functions used by filters
+    this.comparisonType = {};
+    this.comparisonType.LESS_THAN =                function(a,b) {return _tryFloat(a) <  _tryFloat(b)};
+    this.comparisonType.LESS_THAN_OR_EQUAL_TO =    function(a,b) {return _tryFloat(a) <= _tryFloat(b)};
+    this.comparisonType.EQUAL_TO =                 function(a,b) {return _tryFloat(a) == _tryFloat(b)};
+    this.comparisonType.GREATER_THAN_OR_EQUAL_TO = function(a,b) {return _tryFloat(a) >= _tryFloat(b)};
+    this.comparisonType.GREATER_THAN =             function(a,b) {return _tryFloat(a) >  _tryFloat(b)};
+    this.comparisonType.CONTAINS =                 function(a,b) {return a.toString().includes(b)};
+    this.comparisonType.DOES_NOT_CONTAIN =         function(a,b) {return !a.toString().includes(b)};
+    this.comparisonType.LESS_THAN.label =                "is less than";
+    this.comparisonType.LESS_THAN_OR_EQUAL_TO.label =    "is less than or equal to";
+    this.comparisonType.EQUAL_TO.label =                 "is equal to";
+    this.comparisonType.GREATER_THAN_OR_EQUAL_TO.label = "is greater than or equal to";
+    this.comparisonType.GREATER_THAN.label =             "is greater than";
+    this.comparisonType.CONTAINS.label =                 "contains";
+    this.comparisonType.DOES_NOT_CONTAIN.label =         "does not contain";
   }
   
   //Member fields
@@ -71,26 +92,16 @@ export default class BeerTable extends React.Component {
     price: new Column("price","Price",sortOrder.ASCENDING,200)
   };
   //visible columns = columns actually shown, in the order of drawing
-  visibleColumns = [this.columns.order, this.columns.name,this.columns.rating, this.columns.abv,this.columns.brewery];
+  visibleColumns = [this.columns.order, this.columns.name,this.columns.rating,this.columns.abv,this.columns.brewery];
   //sortByColumns = array of columns used for sorting, in order of precedence
   sortByColumns = this.visibleColumns.slice();
   //activeFilters = currently active filters (default none)
   activeFilters = [];
   
-  //enumerated constants for comparison funcs used by filters
-  comparisonType = {
-    LESS_THAN: function(a,b) {return a < b},
-    LESS_THAN_OR_EQUAL_TO: function(a,b) {return a <= b},
-    EQUAL_TO: function(a,b) {return a == b},
-    GREATER_THAN_OR_EQUAL_TO: function(a,b) {return a >= b},
-    GREATER_THAN: function(a,b) {return a > b},
-    CONTAINS: function(a,b) {return a.toString().includes(b)},
-    DOES_NOT_CONTAIN: function(a,b) {return !a.toString().includes(b)},
-  }
   
   //Member functions
   
-    //Renders the table header, with labels for columns
+  //Renders the table header, with labels for columns
   renderHeader = function() {
     return (
       <View key='-1' style={{minHeight: 40, maxHeight: 40, borderWidth:0, padding: 0, flex: 5, alignSelf: 'stretch', flexDirection: 'row' }}>
@@ -225,6 +236,12 @@ export default class BeerTable extends React.Component {
   //should be called externally- adds the filter to the list
   addFilter = function(filter) {
     this.activeFilters.push(filter);
+    if(typeof this.updateCallback==="function")this.updateCallback(this);
+  }
+  
+  //should be called externally- removes the filter from the list
+  removeFilterByIndex = function(index) {
+    this.activeFilters.splice(index,1);
     if(typeof this.updateCallback==="function")this.updateCallback(this);
   }
   

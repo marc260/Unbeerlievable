@@ -19,13 +19,8 @@ export default class ListScreen extends React.Component {
   
   //member variables
   static navigationOptions = {
-    title: 'BeerList',
+    title: 'Scanned Beer Menu',
   };
-  Menu = [
-    { order: 1, name: "Test", rating: 4},
-    { order: 2, name: "Test2", rating: 4.5},
-    { order: 3, name: "Abcd", rating: 3},
-  ];
   state = {
     table: new BeerTable(MenuManager.getLastMenu(), (Table) => { this.
     forceUpdate(); }),
@@ -64,52 +59,74 @@ export default class ListScreen extends React.Component {
         <ScrollView style={styles.container}>
           <View>
             <Text>
-              {"Filters"}
+              {"Filters:"}
             </Text>
             <View>
-            {/*TODO display list of active filters here...*/}
+            {
+              this.state.table.activeFilters.map((f, i) => {
+                return (
+                    <View key={i} flexDirection='row' alignContent='center'>
+                      <Button
+                        title="X"
+                        maxWidth={40}
+                        color="#db1c1c"
+                        onPress={() => {
+                          this.state.table.removeFilterByIndex(i);
+                        }}
+                      />
+                      <Text>
+                        {"  "+f.col.label+" "+f.comparison.label+" "+f.value}
+                      </Text>
+                    </View>
+                )
+              })
+            }
             </View>
+            <Text>
+              {"Add a new filter:"}
+            </Text>
             <View flexDirection='row'>
+              <View flex={0} flexDirection='column' maxHeight={40} maxWidth={50}>
+                <Button
+                  title="+"
+                  color="#18af20"
+                  onPress={() => {
+                    this.setState(
+                      this.state.table.addFilter(new this.state.table.Filter(this.state.newFilterColumn,this.state.newFilterComparison,this.state.newFilterValue))
+                    );
+                  }}
+                />
+              </View>
               <Picker
-                style={{ height: 50, width: 150 }}
+                style={{ height: 50, minWidth: 150 }}
                 selectedValue={this.state.newFilterColumn}
                 onValueChange={(itemValue, itemIndex) => this.setState({newFilterColumn: itemValue})}>
-                 {
+                {
                   this.state.filterColumns.map((f, i) => {
-                    console.log("F: ",f);
                     return (
                        <Picker.Item key={i} label={f.label} value={f} />
                     );
                   })
-                  }
+                }
               </Picker>
               <Picker
-                style={{ height: 50, width: 150 }}
+                style={{ height: 50, minWidth: 150 }}
                 selectedValue={this.state.newFilterComparison}
                 onValueChange={(itemValue, itemIndex) => this.setState({newFilterComparison: itemValue})}>
-                <Picker.Item label="Is less than" value={this.state.table.comparisonType.LESS_THAN} />
-                <Picker.Item label="Is less than or equal to" value={this.state.table.comparisonType.LESS_THAN_OR_EQUAL_TO} />
+                <Picker.Item label="Is < than" value={this.state.table.comparisonType.LESS_THAN} />
+                <Picker.Item label="Is < or = to" value={this.state.table.comparisonType.LESS_THAN_OR_EQUAL_TO} />
                 <Picker.Item label="Is" value={this.state.table.comparisonType.EQUAL_TO} />
-                <Picker.Item label="Is greater than or equal to" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
-                <Picker.Item label="Is greater than" value={this.state.table.comparisonType.GREATER_THAN} />
+                <Picker.Item label="Is > or = to" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
+                <Picker.Item label="Is > than" value={this.state.table.comparisonType.GREATER_THAN} />
                 <Picker.Item label="Contains" value={this.state.table.comparisonType.CONTAINS} />
                 <Picker.Item label="Does not contain" value={this.state.table.comparisonType.DOES_NOT_CONTAIN} />
               </Picker>
               <TextInput
-                style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                style={{height: 40, minWidth: 50, borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(text) => this.setState({newFilterValue: text})}
                 value={this.state.newFilterValue}
               />
             </View>
-            <Button
-              title="Add new filter"
-              onPress={() => {
-                this.setState(
-                  this.state.table.addFilter(new this.state.table.Filter(this.state.newFilterColumn,this.state.newFilterComparison,this.state.newFilterValue))
-                );
-                
-              }}
-            />
           </View>
           <ScrollView horizontal={true}>
             {this.state.table.render()}
