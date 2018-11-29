@@ -27,12 +27,22 @@ export default class ListScreen extends React.Component {
     { order: 3, name: "Abcd", rating: 3},
   ];
   state = {
-    table: new BeerTable(MenuManager.getLastMenu(), (Table) => { this.forceUpdate(); }),
-    newFilterColumn: "Column to filter...",
-    newFilterComparison: "Is",
-    newFilterValue: "",
+    table: new BeerTable(MenuManager.getLastMenu(), (Table) => { this.
+    forceUpdate(); }),
   };
   
+  constructor(props) {
+    super(props);
+    this.state.newFilterColumn=new this.state.table.Column(this.state.table.columns.rating);
+    this.state.filterColumns = [this.state.newFilterColumn];
+    for(let c of this.state.table.visibleColumns){
+      if(c.label == this.state.newFilterColumn.label) continue;
+      this.state.filterColumns[this.state.filterColumns.length] = new this.state.table.Column(c);
+      if(c.label == "") this.state.filterColumns[this.state.filterColumns.length-1].label = "Menu Order";
+    }
+    this.state.newFilterComparison= this.state.table.comparisonType.LESS_THAN;
+    this.state.newFilterValue= "";
+  };
   
   //member functions
   render() {/* alert(JSON.stringify(MenuManager.getLastMenu())); */
@@ -61,14 +71,20 @@ export default class ListScreen extends React.Component {
             </View>
             <View flexDirection='row'>
               <Picker
-                style={{ height: 50, width: 100 }}
+                style={{ height: 50, width: 150 }}
                 selectedValue={this.state.newFilterColumn}
                 onValueChange={(itemValue, itemIndex) => this.setState({newFilterColumn: itemValue})}>
-                <Picker.Item label={this.state.table.columns.rating.label} value={this.state.table.columns.rating} />
-                <Picker.Item label={this.state.table.columns.name.label} value={this.state.table.columns.name} />
+                 {
+                  this.state.filterColumns.map((f, i) => {
+                    console.log("F: ",f);
+                    return (
+                       <Picker.Item key={i} label={f.label} value={f} />
+                    );
+                  })
+                  }
               </Picker>
               <Picker
-                style={{ height: 50, width: 100 }}
+                style={{ height: 50, width: 150 }}
                 selectedValue={this.state.newFilterComparison}
                 onValueChange={(itemValue, itemIndex) => this.setState({newFilterComparison: itemValue})}>
                 <Picker.Item label="Is less than" value={this.state.table.comparisonType.LESS_THAN} />
@@ -76,6 +92,8 @@ export default class ListScreen extends React.Component {
                 <Picker.Item label="Is" value={this.state.table.comparisonType.EQUAL_TO} />
                 <Picker.Item label="Is greater than or equal to" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
                 <Picker.Item label="Is greater than" value={this.state.table.comparisonType.GREATER_THAN} />
+                <Picker.Item label="Contains" value={this.state.table.comparisonType.CONTAINS} />
+                <Picker.Item label="Does not contain" value={this.state.table.comparisonType.DOES_NOT_CONTAIN} />
               </Picker>
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
@@ -86,7 +104,10 @@ export default class ListScreen extends React.Component {
             <Button
               title="Add new filter"
               onPress={() => {
-                this.state.table.addFilter(new this.state.table.Filter(this.state.newFilterColumn,this.state.newFilterComparison,this.state.newFilterValue));
+                this.setState(
+                  this.state.table.addFilter(new this.state.table.Filter(this.state.newFilterColumn,this.state.newFilterComparison,this.state.newFilterValue))
+                );
+                
               }}
             />
           </View>

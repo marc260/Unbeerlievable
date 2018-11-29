@@ -24,11 +24,20 @@ var sortOrder = {
 //helper classes
 
 class Column {
-  constructor(key,label, order, width){
-    this.key = key;
-    this.label = label;
-    this.order = order;
-    this.width = width;
+  //basic constructor for setting values easily
+  //copy constructor(column) just clones column
+  constructor(key, label, order, width){
+    if(label == undefined){
+      for(let propt in key){
+        this[propt] = key[propt];
+      }
+    }
+    else{
+      this.key = key;
+      this.label = label;
+      this.order = order;
+      this.width = width;
+    }
   }
 }
 
@@ -70,11 +79,13 @@ export default class BeerTable extends React.Component {
   
   //enumerated constants
   comparisonType = {
-    LESS_THAN: function(a,b) {a < b},
-    LESS_THAN_OR_EQUAL_TO: function(a,b) {a <= b},
-    EQUAL_TO: function(a,b) {a == b},
-    GREATER_THAN_OR_EQUAL_TO: function(a,b) {a >= b},
-    GREATER_THAN: function(a,b) {a > b},
+    LESS_THAN: function(a,b) {return a < b},
+    LESS_THAN_OR_EQUAL_TO: function(a,b) {return a <= b},
+    EQUAL_TO: function(a,b) {return a == b},
+    GREATER_THAN_OR_EQUAL_TO: function(a,b) {return a >= b},
+    GREATER_THAN: function(a,b) {return a > b},
+    CONTAINS: function(a,b) {return a.toString().includes(b)},
+    DOES_NOT_CONTAIN: function(a,b) {return !a.toString().includes(b)},
   }
   
   //Member functions
@@ -110,7 +121,7 @@ export default class BeerTable extends React.Component {
   renderRow = function(beer, i) {
     for(let f of this.activeFilters){
       if(typeof beer[f.col.key] !== "undefined"){
-        console.log("FILTER:",beer[f.col.key],f.value,f.comparison(beer[f.col.key],f.value));
+        //console.log("FILTER:",beer[f.col.key],f.value,f.comparison,f.comparison(beer[f.col.key],f.value));
         if(!f.comparison(beer[f.col.key],f.value)){
           return;
         }
