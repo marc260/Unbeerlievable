@@ -77,7 +77,7 @@ export default class BeerTable extends React.Component {
   //activeFilters = currently active filters (default none)
   activeFilters = [];
   
-  //enumerated constants
+  //enumerated constants for comparison funcs used by filters
   comparisonType = {
     LESS_THAN: function(a,b) {return a < b},
     LESS_THAN_OR_EQUAL_TO: function(a,b) {return a <= b},
@@ -119,6 +119,7 @@ export default class BeerTable extends React.Component {
   
   //Renders one row, with information about one beer
   renderRow = function(beer, i) {
+    //apply filters
     for(let f of this.activeFilters){
       if(typeof beer[f.col.key] !== "undefined"){
         //console.log("FILTER:",beer[f.col.key],f.value,f.comparison,f.comparison(beer[f.col.key],f.value));
@@ -127,6 +128,7 @@ export default class BeerTable extends React.Component {
         }
       }
     }
+    //render the row
     return (
       <View key={i} style={{minHeight:40, borderWidth:0, padding: 0, flex: 5, alignSelf: 'stretch', flexDirection: 'row' }}>
           {

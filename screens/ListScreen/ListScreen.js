@@ -111,7 +111,9 @@ export default class ListScreen extends React.Component {
               }}
             />
           </View>
-          {this.state.table.render()}
+          <ScrollView horizontal={true}>
+            {this.state.table.render()}
+          </ScrollView>
         </ScrollView>
       </ScrollView>
     );
