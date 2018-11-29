@@ -104,11 +104,11 @@ export default class ListScreen extends React.Component {
                 pickerTextEllipsisLen={5}
                 selectedValue={this.state.newFilterComparison}
                 onValueChange={(itemValue, itemIndex) => this.setState({newFilterComparison: itemValue})}>
-                <Picker.Item label="<" value={this.state.table.comparisonType.LESS_THAN} />
+                <Picker.Item label="< than" value={this.state.table.comparisonType.LESS_THAN} />
                 <Picker.Item label="< or =" value={this.state.table.comparisonType.LESS_THAN_OR_EQUAL_TO} />
                 <Picker.Item label="Is" value={this.state.table.comparisonType.EQUAL_TO} />
                 <Picker.Item label="> or =" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
-                <Picker.Item label=">" value={this.state.table.comparisonType.GREATER_THAN} />
+                <Picker.Item label="> than" value={this.state.table.comparisonType.GREATER_THAN} />
                 <Picker.Item label="Contains" value={this.state.table.comparisonType.CONTAINS} />
                 <Picker.Item label="Does not contain" value={this.state.table.comparisonType.DOES_NOT_CONTAIN} />
               </Picker>
