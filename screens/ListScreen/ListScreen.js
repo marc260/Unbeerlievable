@@ -66,6 +66,9 @@ export default class ListScreen extends React.Component {
               this.state.table.activeFilters.map((f, i) => {
                 return (
                     <View key={i} flexDirection='row' alignContent='center'>
+                      <Text>
+                        {"   "+f.col.label+" "+f.comparison.label+" "+f.value+"   "}
+                      </Text>
                       <Button
                         title="X"
                         maxWidth={40}
@@ -74,9 +77,6 @@ export default class ListScreen extends React.Component {
                           this.state.table.removeFilterByIndex(i);
                         }}
                       />
-                      <Text>
-                        {"  "+f.col.label+" "+f.comparison.label+" "+f.value}
-                      </Text>
                     </View>
                 )
               })
@@ -86,19 +86,9 @@ export default class ListScreen extends React.Component {
               {"Add a new filter:"}
             </Text>
             <View flexDirection='row'>
-              <View flex={0} flexDirection='column' maxHeight={40} maxWidth={50}>
-                <Button
-                  title="+"
-                  color="#18af20"
-                  onPress={() => {
-                    this.setState(
-                      this.state.table.addFilter(new this.state.table.Filter(this.state.newFilterColumn,this.state.newFilterComparison,this.state.newFilterValue))
-                    );
-                  }}
-                />
-              </View>
               <Picker
-                style={{ height: 50, minWidth: 150 }}
+                style={{ height: 50, minWidth: 140 }}
+                pickerTextEllipsisLen={5}
                 selectedValue={this.state.newFilterColumn}
                 onValueChange={(itemValue, itemIndex) => this.setState({newFilterColumn: itemValue})}>
                 {
@@ -110,14 +100,15 @@ export default class ListScreen extends React.Component {
                 }
               </Picker>
               <Picker
-                style={{ height: 50, minWidth: 150 }}
+                style={{ height: 50, minWidth: 120 }}
+                pickerTextEllipsisLen={5}
                 selectedValue={this.state.newFilterComparison}
                 onValueChange={(itemValue, itemIndex) => this.setState({newFilterComparison: itemValue})}>
-                <Picker.Item label="Is < than" value={this.state.table.comparisonType.LESS_THAN} />
-                <Picker.Item label="Is < or = to" value={this.state.table.comparisonType.LESS_THAN_OR_EQUAL_TO} />
+                <Picker.Item label="<" value={this.state.table.comparisonType.LESS_THAN} />
+                <Picker.Item label="< or =" value={this.state.table.comparisonType.LESS_THAN_OR_EQUAL_TO} />
                 <Picker.Item label="Is" value={this.state.table.comparisonType.EQUAL_TO} />
-                <Picker.Item label="Is > or = to" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
-                <Picker.Item label="Is > than" value={this.state.table.comparisonType.GREATER_THAN} />
+                <Picker.Item label="> or =" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
+                <Picker.Item label=">" value={this.state.table.comparisonType.GREATER_THAN} />
                 <Picker.Item label="Contains" value={this.state.table.comparisonType.CONTAINS} />
                 <Picker.Item label="Does not contain" value={this.state.table.comparisonType.DOES_NOT_CONTAIN} />
               </Picker>
@@ -126,6 +117,20 @@ export default class ListScreen extends React.Component {
                 onChangeText={(text) => this.setState({newFilterValue: text})}
                 value={this.state.newFilterValue}
               />
+              <Text>
+                {"  "}
+              </Text>
+              <View flex={0} flexDirection='column' maxHeight={40} maxWidth={50}>
+                <Button
+                  title="+"
+                  color="#18af20"
+                  onPress={() => {
+                    this.setState(
+                      this.state.table.addFilter(new this.state.table.Filter(this.state.newFilterColumn,this.state.newFilterComparison,this.state.newFilterValue))
+                    );
+                  }}
+                />
+              </View>
             </View>
           </View>
           <ScrollView horizontal={true}>

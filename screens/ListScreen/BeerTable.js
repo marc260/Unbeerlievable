@@ -21,6 +21,10 @@ var sortOrder = {
   DESCENDING: -1,
 }
 
+//constant file location for images
+var UP_ARROW_FILE = "../../assets/images/up_arrow.png";
+var DOWN_ARROW_FILE = "../../assets/images/down_arrow.png";
+
 //helper classes
 
 class Column {
@@ -115,8 +119,9 @@ export default class BeerTable extends React.Component {
                     <View alignContent='flex-end'>
                       <TouchableOpacity color='#00000000' backgroundColor='#00000000' onPress={() => {this._selectHeader(col)}}>
                         <Animated.Image 
-                          style={{minHeight: 24, minWidth: 24, maxHeight:24, maxWidth:24, flex: -1}} source={require("../../assets/images/arrow.png")}
-                          /* style={[this.Rotate_Y_AnimatedStyle, styles.imageViewStyle]} */>
+                          style={{minHeight: 24, minWidth: 24, maxHeight:24, maxWidth:24, flex: -1}}
+                          source={col.order == sortOrder.ASCENDING ?
+                            require(UP_ARROW_FILE) : require(DOWN_ARROW_FILE)}>
                         </Animated.Image>
                       </TouchableOpacity>
                     </View>
@@ -133,7 +138,6 @@ export default class BeerTable extends React.Component {
     //apply filters
     for(let f of this.activeFilters){
       if(typeof beer[f.col.key] !== "undefined"){
-        //console.log("FILTER:",beer[f.col.key],f.value,f.comparison,f.comparison(beer[f.col.key],f.value));
         if(!f.comparison(beer[f.col.key],f.value)){
           return;
         }
