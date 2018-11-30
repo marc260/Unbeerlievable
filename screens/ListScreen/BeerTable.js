@@ -121,7 +121,7 @@ export default class BeerTable extends React.Component {
                         <Animated.Image 
                           style={{minHeight: 24, minWidth: 24, maxHeight:24, maxWidth:24, flex: -1}}
                           source={col.order == sortOrder.ASCENDING ?
-                            require(DOWN_ARROW_FILE) : require(UP_ARROW_FILE)}>
+                            require(UP_ARROW_FILE) : require(DOWN_ARROW_FILE)}>
                         </Animated.Image>
                       </TouchableOpacity>
                     </View>
