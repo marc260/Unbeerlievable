@@ -21,7 +21,7 @@ var sortOrder = {
   DESCENDING: -1,
 }
 
-//constant file location for images
+//constant file location for imagess
 var UP_ARROW_FILE = "../../assets/images/up_arrow.png";
 var DOWN_ARROW_FILE = "../../assets/images/down_arrow.png";
 
