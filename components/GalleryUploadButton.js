@@ -21,7 +21,7 @@ class CameraUploadButton extends React.Component{
             style={styles.welcomeImage}
             source={__DEV__
               ? require('../assets/images/logo.png')//our logo
-              : require('../assets/images/robot-prod.png')}
+              : require('../assets/images/logo.png')}
               
           />
           <Text>
@@ -95,6 +95,7 @@ class CameraUploadButton extends React.Component{
 
           //loop through each line and send a get request to API gateway
           for (let index = 0; index < lines.length; index++) {
+            console.log('Line ' + index + ' ' + lines[index]);
             //dont query if there are any $ in the beginning of the word (prices)
             if (lines[index].charAt(0) != '$') { 
               const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
@@ -105,13 +106,14 @@ class CameraUploadButton extends React.Component{
                 },
               });
               const dbResult = await res.json();
-
+              console.log(dbResult);
               if (dbResult == null) {//if true there where no matches
                 //alert("The database returned no matches!");
               } else{//match found
                   //Push query result to Beerlist
                 MenuManager.getLastMenu().push({order: index+1});
                 for (const [key, value] of Object.entries(dbResult)) {
+                  console.log(`${key}: ${value}`);
                   MenuManager.getLastMenuEntry()[key] = value;
                 }
               }
