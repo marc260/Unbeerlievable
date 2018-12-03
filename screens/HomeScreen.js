@@ -133,6 +133,7 @@ class HomeScreen extends React.Component {
       lines.pop();//removes \n (last line that comes with the google vision result)
 
       MenuManager.push([]);//Initialize Beerlist
+      let num = 0;
       
       //loop through each line and send a get request to API gateway
       for (let index = 0; index < lines.length; index++) {
@@ -153,7 +154,7 @@ class HomeScreen extends React.Component {
             //alert("The database returned no matches!");
           } else{//match found
             //Push query result to Beerlist
-            MenuManager.getLastMenu().push({order: index+1});
+            MenuManager.getLastMenu().push({order: ++num});
             for (const [key, value] of Object.entries(dbResult)) {
               MenuManager.getLastMenuEntry()[key] = value;
             }

@@ -73,8 +73,8 @@ export default class BeerTable extends React.Component {
     this.comparisonType.EQUAL_TO =                 function(a,b) {return _tryFloat(a) == _tryFloat(b)};
     this.comparisonType.GREATER_THAN_OR_EQUAL_TO = function(a,b) {return _tryFloat(a) >= _tryFloat(b)};
     this.comparisonType.GREATER_THAN =             function(a,b) {return _tryFloat(a) >  _tryFloat(b)};
-    this.comparisonType.CONTAINS =                 function(a,b) {return a.toString().includes(b)};
-    this.comparisonType.DOES_NOT_CONTAIN =         function(a,b) {return !a.toString().includes(b)};
+    this.comparisonType.CONTAINS =                 function(a,b) {return a.toString().toUpperCase().includes(b.toString().toUpperCase())};
+    this.comparisonType.DOES_NOT_CONTAIN =         function(a,b) {return !a.toString().toUpperCase().includes(b.toString().toUpperCase())};
     this.comparisonType.LESS_THAN.label =                "is less than";
     this.comparisonType.LESS_THAN_OR_EQUAL_TO.label =    "is less than or equal to";
     this.comparisonType.EQUAL_TO.label =                 "is equal to";
@@ -217,8 +217,6 @@ export default class BeerTable extends React.Component {
       col.order *= -1;
     }
     else this.sortByColumns.unshift(this.sortByColumns.splice(this.sortByColumns.indexOf(col),1)[0]);
-    console.log(this.sortByColumns);
-    console.log(this.activeFilters);
     
     let sortByColumns = this.sortByColumns;
     this.menu.sort(function (a,b){

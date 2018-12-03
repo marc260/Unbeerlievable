@@ -42,7 +42,7 @@ export default class ListScreen extends React.Component {
   //member functions
   render() {/* alert(JSON.stringify(MenuManager.getLastMenu())); */
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <View>
           <Button
             title="Return to Home"
@@ -65,7 +65,7 @@ export default class ListScreen extends React.Component {
             {
               this.state.table.activeFilters.map((f, i) => {
                 return (
-                    <View key={i} flexDirection='row' alignContent='center'>
+                    <ScrollView key={i} flexDirection='row' alignContent='center' horizontal={true}>
                       <Text>
                         {"   "+f.col.label+" "+f.comparison.label+" "+f.value+"   "}
                       </Text>
@@ -77,7 +77,7 @@ export default class ListScreen extends React.Component {
                           this.state.table.removeFilterByIndex(i);
                         }}
                       />
-                    </View>
+                    </ScrollView>
                 )
               })
             }
@@ -85,7 +85,7 @@ export default class ListScreen extends React.Component {
             <Text>
               {"Add a new filter:"}
             </Text>
-            <View flexDirection='row'>
+            <ScrollView flexDirection='row' horizontal={true}>
               <Picker
                 style={{ height: 50, minWidth: 140 }}
                 pickerTextEllipsisLen={5}
@@ -131,13 +131,13 @@ export default class ListScreen extends React.Component {
                   }}
                 />
               </View>
-            </View>
+            </ScrollView>
           </View>
           <ScrollView horizontal={true}>
             {this.state.table.render()}
           </ScrollView>
         </ScrollView>
-      </ScrollView>
+      </View>
     );
   }
 

@@ -30,6 +30,8 @@ class CameraUploadButton extends React.Component{
   }
   _pickImageFromCamera = async () => {
 
+    console.log("Camera");
+  
     //check if permission was already granted
     const permission = await Permissions.getAsync(Permissions.CAMERA);
     if (permission.status !== 'granted') {
@@ -92,7 +94,10 @@ class CameraUploadButton extends React.Component{
           lines.pop();//removes \n (last line that comes with the google vision result)
 
           MenuManager.push([]);
-
+          var num = 0;
+          
+          console.log("Google Vision returned:\n"+googleVisionResult);
+          
           //loop through each line and send a get request to API gateway
           for (let index = 0; index < lines.length; index++) {
             //dont query if there are any $ in the beginning of the word (prices)
@@ -106,11 +111,13 @@ class CameraUploadButton extends React.Component{
               });
               const dbResult = await res.json();
 
+              //console.log("Database returned:\n"+JSON.stringify(dbResult));
+              
               if (dbResult == null) {//if true there where no matches
                 //alert("The database returned no matches!");
               } else{//match found
                 //Push query result to Beerlist
-                MenuManager.getLastMenu().push({order: index+1});
+                MenuManager.getLastMenu().push({order: ++num});//index+1
                 for (const [key, value] of Object.entries(dbResult)) {
                   MenuManager.getLastMenuEntry()[key] = value;
                 }
