@@ -100,7 +100,7 @@ export default class BeerTable extends React.Component {
     price: new Column("price","Price",sortOrder.ASCENDING,200)
   };
   //visible columns = columns actually shown, in the order of drawing
-  visibleColumns = [this.columns.order, this.columns.name,this.columns.rating,this.columns.abv,this.columns.style,this.columns.brewery];
+  visibleColumns = [this.columns.order, this.columns.name,this.columns.rating,this.columns.abv,this.columns.brewery];
   //sortByColumns = array of columns used for sorting, in order of precedence
   sortByColumns = this.visibleColumns.slice();
   //activeFilters = currently active filters (default none)
@@ -205,13 +205,13 @@ export default class BeerTable extends React.Component {
             Alert.alert('Modal has been closed.');
           }}>
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
-            <View style={{flex: 0, alignSelf: 'center', width: Dimensions.get('window').width*4/5, backgroundColor: "#ffffff", opacity: .95, padding: 10}}>
-              <Text style={{fontWeight: "bold"}}>{this.selectedBeer!=null&&this.selectedBeer.name!=null ? this.selectedBeer.name+"\n" : "Untitled\n"}</Text>
+            <View style={{flex: 0, alignSelf: 'center', width: Dimensions.get('window').width*4/5, backgroundColor: "#ffffff", borderWidth:1, opacity: .95, padding: 10}}>
+              <Text style={{fontWeight: "bold", textAlign: "center"}}>{this.selectedBeer!=null&&this.selectedBeer.name!=null ? this.selectedBeer.name+"\n" : "Untitled\n"}</Text>
               <View>
               {(()=>{
                 if(this.selectedBeer!=null&&this.selectedBeer.img_url!=null){
                   return (
-                    <Image style={{width:150,height:300}} source={{uri: this.selectedBeer.img_url.toString()}}/>
+                    <Image style={{width:150,height:300,alignSelf:"center"}} source={{uri: this.selectedBeer.img_url.toString()}}/>
                   )
                 }
                 return (
@@ -222,16 +222,17 @@ export default class BeerTable extends React.Component {
               <Text>{(()=>{
                 let str = "Properties of this beer:\n";
                 for (let prop in this.selectedBeer){
-                  str+=prop.toString()+" ";
+                  str+=prop.toString()+": "+this.selectedBeer[prop]+"\n";
                 }
-                return str;
+                //return str;
+                return "\n";
               })()}</Text>
               <Text>{this.selectedBeer!=null && this.selectedBeer.description!=="undefined" ? this.selectedBeer.description : "No detailed information on this beer."}</Text>
               <TouchableHighlight style={{flex: 0, padding: 10}}
                 onPress={() => {
                   this._setModalVisible(!this.modalVisible);
                 }}>
-                <Text style={{textAlign: 'right'}}>Dismiss</Text>
+                <Text style={{textAlign: 'right', color: "#0000ff"}}>Dismiss</Text>
               </TouchableHighlight>
             </View>
           </View>
