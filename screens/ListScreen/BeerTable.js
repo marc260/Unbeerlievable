@@ -10,7 +10,10 @@ import {
   Button,
   TouchableOpacity,
   Animated,
-  Alert
+  Alert,
+  Modal,
+  TouchableHighlight,
+  Dimensions,
 } from 'react-native';
 
 import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
@@ -92,15 +95,20 @@ export default class BeerTable extends React.Component {
     rating: new Column("rating","Rating",sortOrder.DESCENDING,100),
     numRatings: new Column("numRatings","Number of Ratings",sortOrder.DESCENDING,300),
     abv: new Column("abv","Alc. by vol.",sortOrder.DESCENDING,200),
+    style: new Column("style","Beer style",sortOrder.ASCENDING,250),
     brewery: new Column("brewery","Brewery",sortOrder.ASCENDING,200),
     price: new Column("price","Price",sortOrder.ASCENDING,200)
   };
   //visible columns = columns actually shown, in the order of drawing
-  visibleColumns = [this.columns.order, this.columns.name,this.columns.rating,this.columns.abv,this.columns.brewery];
+  visibleColumns = [this.columns.order, this.columns.name,this.columns.rating,this.columns.abv,this.columns.style,this.columns.brewery];
   //sortByColumns = array of columns used for sorting, in order of precedence
   sortByColumns = this.visibleColumns.slice();
   //activeFilters = currently active filters (default none)
   activeFilters = [];
+  
+  //modal (used for beer info)
+  modalVisible = false;
+  selectedBeer = null;
   
   
   //Member functions
@@ -188,7 +196,46 @@ export default class BeerTable extends React.Component {
   }
     
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
+            <View style={{flex: 0, alignSelf: 'center', width: Dimensions.get('window').width*4/5, backgroundColor: "#ffffff", opacity: .95, padding: 10}}>
+              <Text style={{fontWeight: "bold"}}>{this.selectedBeer!=null&&this.selectedBeer.name!=null ? this.selectedBeer.name+"\n" : "Untitled\n"}</Text>
+              <View>
+              {(()=>{
+                if(this.selectedBeer!=null&&this.selectedBeer.img_url!=null){
+                  return (
+                    <Image style={{width:150,height:300}} source={{uri: this.selectedBeer.img_url.toString()}}/>
+                  )
+                }
+                return (
+                  <Text>No image for this beer.</Text>
+                )
+              })()}
+              </View>
+              <Text>{(()=>{
+                let str = "Properties of this beer:\n";
+                for (let prop in this.selectedBeer){
+                  str+=prop.toString()+" ";
+                }
+                return str;
+              })()}</Text>
+              <Text>{this.selectedBeer!=null && this.selectedBeer.description!=="undefined" ? this.selectedBeer.description : "No detailed information on this beer."}</Text>
+              <TouchableHighlight style={{flex: 0, padding: 10}}
+                onPress={() => {
+                  this._setModalVisible(!this.modalVisible);
+                }}>
+                <Text style={{textAlign: 'right'}}>Dismiss</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
         {
           this.renderHeader()
         }
@@ -249,12 +296,20 @@ export default class BeerTable extends React.Component {
   
   //called when a beer is selected
   _selectBeer = function(beer) {
-    Alert.alert('Details',beer.description!=="undefined" ? beer.description : "No detailed information on this beer.");
+    this.selectedBeer= beer;
+    this._setModalVisible(true);
+    //Alert.alert('Details',beer.description!=="undefined" ? beer.description : "No detailed information on this beer.");
   }
   
   //called when a column's header is tapped
   _selectHeader = function(col) {
     this.sortMenu(col);
+    if(typeof this.updateCallback==="function")this.updateCallback(this);
+  }
+  
+  //set modal visible or invisible 
+  _setModalVisible = function(visibility){
+    this.modalVisible = visibility;
     if(typeof this.updateCallback==="function")this.updateCallback(this);
   }
 }

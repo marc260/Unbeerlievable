@@ -98,7 +98,7 @@ class CameraUploadButton extends React.Component{
           for (let index = 0; index < lines.length; index++) {
             console.log('Line ' + index + ' ' + lines[index]);
             //dont query if there are any $ in the beginning of the word (prices)
-            if (lines[index].charAt(0) != '$') { 
+            if (lines[index] != undefined && lines[index] != null && lines[index].toString().charAt(0) != '$' && lines[index].toString().toUpperCase() != "BEER" && lines[index].toString().toUpperCase() != "BEERS" && lines[index].toString().toUpperCase() != "BOTTLED BEER" && lines[index].toString().toUpperCase() != "BOTTLED BEERS" && lines[index].toString().toUpperCase() != "DRAFT BEER" && lines[index].toString().toUpperCase() != "DRAFT BEERS") { 
               const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
                 method: 'GET',
                 headers: {

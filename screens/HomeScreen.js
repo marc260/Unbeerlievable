@@ -73,7 +73,7 @@ class HomeScreen extends React.Component {
   _gotoListScreen = async () => {
     //If Beerlist is not empty or has only been initialized but not populated do not open ListScreen
     if(MenuManager.isEmpty() || MenuManager.isNull()){
-      alert("You haven't scanned any menus yet!");
+      alert("Either you haven't scanned any menus yet, or the menu you scanned is still loading!");
     }
     //Else, open ListScreen
     else{
@@ -139,7 +139,7 @@ class HomeScreen extends React.Component {
       for (let index = 0; index < lines.length; index++) {
 
         //dont query if there are any $ in the beginning of the word (prices)
-        if (lines[index].charAt(0) != '$') { 
+        if (lines[index] != undefined && lines[index] != null && lines[index].toString().charAt(0) != '$' && lines[index].toString().toUpperCase() != "BEER" && lines[index].toString().toUpperCase() != "BEERS" && lines[index].toString().toUpperCase() != "BOTTLED BEER" && lines[index].toString().toUpperCase() != "BOTTLED BEERS" && lines[index].toString().toUpperCase() != "DRAFT BEER" && lines[index].toString().toUpperCase() != "DRAFT BEERS") { 
           //Fetch response from AWS API gateway
           const res = await fetch('https://l97xhx8swh.execute-api.us-east-1.amazonaws.com/prod/helloworld', {
             method: 'GET',
