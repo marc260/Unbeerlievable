@@ -43,7 +43,7 @@ class CameraUploadButton extends React.Component{
     else {
       //Obtain image
       let result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,
+        allowsEditing: false,
         aspect: [4, 3],
         base64: true,
       });

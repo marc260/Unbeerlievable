@@ -86,32 +86,36 @@ export default class ListScreen extends React.Component {
               {"Add a new filter:"}
             </Text>
             <ScrollView flexDirection='row' horizontal={true}>
-              <Picker
-                style={{ height: 50, minWidth: 140 }}
-                pickerTextEllipsisLen={5}
-                selectedValue={this.state.newFilterColumn}
-                onValueChange={(itemValue, itemIndex) => this.setState({newFilterColumn: itemValue})}>
-                {
-                  this.state.filterColumns.map((f, i) => {
-                    return (
-                       <Picker.Item key={i} label={f.label} value={f} />
-                    );
-                  })
-                }
-              </Picker>
-              <Picker
-                style={{ height: 50, minWidth: 120 }}
-                pickerTextEllipsisLen={5}
-                selectedValue={this.state.newFilterComparison}
-                onValueChange={(itemValue, itemIndex) => this.setState({newFilterComparison: itemValue})}>
-                <Picker.Item label="< than" value={this.state.table.comparisonType.LESS_THAN} />
-                <Picker.Item label="< or =" value={this.state.table.comparisonType.LESS_THAN_OR_EQUAL_TO} />
-                <Picker.Item label="Is" value={this.state.table.comparisonType.EQUAL_TO} />
-                <Picker.Item label="> or =" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
-                <Picker.Item label="> than" value={this.state.table.comparisonType.GREATER_THAN} />
-                <Picker.Item label="Contains" value={this.state.table.comparisonType.CONTAINS} />
-                <Picker.Item label="Does not contain" value={this.state.table.comparisonType.DOES_NOT_CONTAIN} />
-              </Picker>
+              <View>
+                <Picker
+                  style={{ height: 50, minWidth: 140 }}
+                  pickerTextEllipsisLen={5}
+                  selectedValue={this.state.newFilterColumn}
+                  onValueChange={(itemValue, itemIndex) => this.setState({newFilterColumn: itemValue})}>
+                  {
+                    this.state.filterColumns.map((f, i) => {
+                      return (
+                         <Picker.Item key={i} label={f.label} value={f} />
+                      );
+                    })
+                  }
+                </Picker>
+              </View>
+              <View>
+                <Picker
+                  style={{ height: 50, minWidth: 120 }}
+                  pickerTextEllipsisLen={5}
+                  selectedValue={this.state.newFilterComparison}
+                  onValueChange={(itemValue, itemIndex) => this.setState({newFilterComparison: itemValue})}>
+                  <Picker.Item label="< than" value={this.state.table.comparisonType.LESS_THAN} />
+                  <Picker.Item label="< or =" value={this.state.table.comparisonType.LESS_THAN_OR_EQUAL_TO} />
+                  <Picker.Item label="Is" value={this.state.table.comparisonType.EQUAL_TO} />
+                  <Picker.Item label="> or =" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
+                  <Picker.Item label="> than" value={this.state.table.comparisonType.GREATER_THAN} />
+                  <Picker.Item label="Contains" value={this.state.table.comparisonType.CONTAINS} />
+                  <Picker.Item label="Does not contain" value={this.state.table.comparisonType.DOES_NOT_CONTAIN} />
+                </Picker>
+              </View>
               <TextInput
                 style={{height: 40, minWidth: 50, borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(text) => this.setState({newFilterValue: text})}
