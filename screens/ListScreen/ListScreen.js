@@ -35,7 +35,8 @@ export default class ListScreen extends React.Component {
       this.state.filterColumns[this.state.filterColumns.length] = new this.state.table.Column(c);
       if(c.label == "") this.state.filterColumns[this.state.filterColumns.length-1].label = "Menu Order";
     }
-    this.state.newFilterComparison= this.state.table.comparisonType.LESS_THAN;
+    this.state.newFilterColumn=this.state.newFilterColumn.key;
+    this.state.newFilterComparison="LESS_THAN";
     this.state.newFilterValue= "";
   };
   
@@ -56,14 +57,14 @@ export default class ListScreen extends React.Component {
             }}
           />
         </View>
-        <ScrollView style={styles.container}>
-          <View>
+        <View>
+          <View borderWidth={1}>
             <Text>
               {"Filters:"}
             </Text>
-            <View>
+            <ScrollView maxHeight={85}>
             {
-              this.state.table.activeFilters.map((f, i) => {
+              this.state.table.activeFilters.slice(0).reverse().map((f, i) => {
                 return (
                     <ScrollView key={i} flexDirection='row' alignContent='center' horizontal={true}>
                       <Text>
@@ -81,62 +82,72 @@ export default class ListScreen extends React.Component {
                 )
               })
             }
-            </View>
-            <Text>
-              {"Add a new filter:"}
-            </Text>
-            <ScrollView flexDirection='row' horizontal={true}>
-              <View>
-                <Picker
-                  style={{ height: 50, minWidth: 140 }}
-                  pickerTextEllipsisLen={5}
-                  selectedValue={this.state.newFilterColumn}
-                  onValueChange={(itemValue, itemIndex) => this.setState({newFilterColumn: itemValue})}>
-                  {
-                    this.state.filterColumns.map((f, i) => {
-                      return (
-                         <Picker.Item key={i} label={f.label} value={f} />
-                      );
-                    })
-                  }
-                </Picker>
-              </View>
-              <View>
-                <Picker
-                  style={{ height: 50, minWidth: 120 }}
-                  pickerTextEllipsisLen={5}
-                  selectedValue={this.state.newFilterComparison}
-                  onValueChange={(itemValue, itemIndex) => this.setState({newFilterComparison: itemValue})}>
-                  <Picker.Item label="< than" value={this.state.table.comparisonType.LESS_THAN} />
-                  <Picker.Item label="< or =" value={this.state.table.comparisonType.LESS_THAN_OR_EQUAL_TO} />
-                  <Picker.Item label="Is" value={this.state.table.comparisonType.EQUAL_TO} />
-                  <Picker.Item label="> or =" value={this.state.table.comparisonType.GREATER_THAN_OR_EQUAL_TO} />
-                  <Picker.Item label="> than" value={this.state.table.comparisonType.GREATER_THAN} />
-                  <Picker.Item label="Contains" value={this.state.table.comparisonType.CONTAINS} />
-                  <Picker.Item label="Does not contain" value={this.state.table.comparisonType.DOES_NOT_CONTAIN} />
-                </Picker>
-              </View>
-              <TextInput
-                style={{height: 40, minWidth: 50, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(text) => this.setState({newFilterValue: text})}
-                value={this.state.newFilterValue}
-              />
-              <Text>
-                {"  "}
-              </Text>
-              <View flex={0} flexDirection='column' maxHeight={40} maxWidth={50}>
-                <Button
-                  title="+"
-                  color="#18af20"
-                  onPress={() => {
-                    this.setState(
-                      this.state.table.addFilter(new this.state.table.Filter(this.state.newFilterColumn,this.state.newFilterComparison,this.state.newFilterValue))
-                    );
-                  }}
-                />
-              </View>
             </ScrollView>
           </View>
+          <Text>
+            {"Add a new filter:"}
+          </Text>
+          <ScrollView flexDirection='row' horizontal={true}>
+            <View flex={1} flexDirection='column' minHeight={50} minWidth={140}>
+              <Picker
+                style={ Platform.OS === 'ios' ?
+                  {position: 'absolute', height: 50, minWidth: 140, top: -100, } :
+                  {height: 50, minWidth: 140}
+                }
+                pickerTextEllipsisLen={5}
+                selectedValue={this.state.newFilterColumn}
+                onValueChange={(itemValue, itemIndex) => {this.setState({newFilterColumn: itemValue}); console.log(this.state.newFilterColumn);}}>
+                {
+                  this.state.filterColumns.map((f, i) => {
+                    return (
+                       <Picker.Item key={i} label={f.label} value={f.key} />
+                    );
+                  })
+                }
+              </Picker>
+            </View>
+            <View flex={1} flexDirection='column' minHeight={50} minWidth={120}>
+              <Picker
+                style={ Platform.OS === 'ios' ?
+                  {position: 'absolute', height: 50, minWidth: 140, top: -100, } :
+                  {height: 50, minWidth: 140}
+                }
+                pickerTextEllipsisLen={5}
+                selectedValue={this.state.newFilterComparison}
+                onValueChange={(itemValue, itemIndex) => {this.setState({newFilterComparison: itemValue});console.log(this.state.newFilterComparison);}}>
+                <Picker.Item label="< than" value={"LESS_THAN"} />
+                <Picker.Item label="< or =" value={"LESS_THAN_OR_EQUAL_TO"} />
+                <Picker.Item label="Is" value={"EQUAL_TO"} />
+                <Picker.Item label="> or =" value={"GREATER_THAN_OR_EQUAL_TO"} />
+                <Picker.Item label="> than" value={"GREATER_THAN"} />
+                <Picker.Item label="Contains" value={"CONTAINS"} />
+                <Picker.Item label="Does not contain" value={"DOES_NOT_CONTAIN"} />
+              </Picker>
+            </View>
+            <TextInput
+              style={{height: 40, minWidth: 40, borderColor: 'gray', borderWidth: 1}}
+              onChangeText={(text) => this.setState({newFilterValue: text})}
+              value={this.state.newFilterValue}
+            />
+            <Text>
+              {"  "}
+            </Text>
+            <View flex={0} flexDirection='column' maxHeight={40} maxWidth={50}>
+              <Button
+                title="+"
+                color="#18af20"
+                onPress={() => {
+                  console.log(this.state.newFilterColumn,this.state.newFilterComparison);
+                  console.log(this.state.table.columns[this.state.newFilterColumn],this.state.table.comparisonType[this.state.newFilterComparison]);
+                  this.setState(
+                    this.state.table.addFilter(new this.state.table.Filter(this.state.table.columns[this.state.newFilterColumn],this.state.table.comparisonType[this.state.newFilterComparison],this.state.newFilterValue))
+                  );
+                }}
+              />
+            </View>
+          </ScrollView>
+        </View>
+        <ScrollView style={styles.container}>
           <ScrollView horizontal={true}>
             {this.state.table.render()}
           </ScrollView>
