@@ -5,7 +5,10 @@
     "slug": "Unbeerlievable",
     "privacy": "public",
     "sdkVersion": "30.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
@@ -21,7 +24,41 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    }
+      "supportsTablet": false,
+      "bundleIdentifier": "edu.rpi.unbeerlievable",
+      "buildNumber": "1.0.0",
+      "icon": "./assets/images/logo.png",
+      "splash": {
+        "backgroundColor": "#ffffff",
+        "resizeMode": "contain",
+        "image": "./assets/images/logo.png"
+      }
+    },
+    "android": {
+      "package": "edu.rpi.unbeerlievable",
+      "versionCode": 1,
+      "icon": "./assets/images/logo.png",
+      "permissions": [
+        "CAMERA",
+        "CAMERA_ROLL"
+      ],
+      "splash": {
+        "backgroundColor": "#ffffff",
+        "resizeMode": "contain",
+        "ldpi": "./assets/images/logo.png",
+        "mdpi": "./assets/images/logo.png",
+        "hdpi": "./assets/images/logo.png",
+        "xhdpi": "./assets/images/logo.png",
+        "xxhdpi": "./assets/images/logo.png",
+        "xxxhdpi": "./assets/images/logo.png"
+      },
+      "publishBundlePath": "android\\app\\src\\main\\assets\\shell-app.bundle",
+      "publishManifestPath": "android\\app\\src\\main\\assets\\shell-app-manifest.json"
+    },
+    "isDetached": true,
+    "detach": {
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.8.1-sdk30.0.0-271c32ab-0715-4dfb-8270-ecead3679bb4.tar.gz"
+    },
+    "scheme": "exp2cf20a394d3e40558e890c60d7aa18f2"
   }
 }
